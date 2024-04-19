@@ -20,15 +20,9 @@ public class Competency {
     private Integer id;
     private String name;
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "topic_id")
-    private Topic topic;
     private Boolean status;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    public Competency(int i, Topic topic, String s) {
-    }
 }

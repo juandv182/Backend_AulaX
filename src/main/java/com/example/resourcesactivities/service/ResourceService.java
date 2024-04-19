@@ -30,17 +30,8 @@ public class ResourceService {
         }
 
         if (competencies != null && !competencies.isEmpty()) {
-
-            List<Integer> topics = competencies.stream()
-                    .map(competencyId -> competencyRepository.findById(competencyId))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(Competency::getTopic)
-                    .map(Topic::getId)
-                    .collect(Collectors.toList());
-
             myResources = myResources.stream()
-                    .filter(resource -> topics.contains(resource.getTopic().getId()))
+                    .filter(resource -> competencies.contains(resource.getTopic().getCompetence().getId()))
                     .collect(Collectors.toList());
         }
         if (courses != null && !courses.isEmpty()) {

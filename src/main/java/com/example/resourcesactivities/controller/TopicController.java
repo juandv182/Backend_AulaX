@@ -43,6 +43,8 @@ public class TopicController {
             existingTopic.setName(topicDetails.getName());
             existingTopic.setDescription(topicDetails.getDescription());
             existingTopic.setCourse(topicDetails.getCourse());
+            existingTopic.setLearningUnit(topicDetails.getLearningUnit());
+            existingTopic.setCompetence(topicDetails.getCompetence());
             existingTopic.setStatus(topicDetails.getStatus());
             Topic updatedTopic = topicRepository.save(existingTopic);
             return ResponseEntity.ok(updatedTopic);

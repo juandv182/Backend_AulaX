@@ -23,14 +23,15 @@ public class Topic {
     @ManyToOne
     @JoinColumn(name = "course_id")
     private Course course;
+    @ManyToOne
+    @JoinColumn(name = "learning_unit_id")
+    private LearningUnit learningUnit;
+    @ManyToOne
+    @JoinColumn(name = "competency_id")
+    private Competency competence;
     private Boolean status;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-
-    public Topic(Integer topicId) {
-        id=topicId;
-    }
 }

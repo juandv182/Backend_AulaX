@@ -42,7 +42,6 @@ public class CompetencyController {
             Competency existingCompetency = optionalCompetency.get();
             existingCompetency.setName(competencyDetails.getName());
             existingCompetency.setDescription(competencyDetails.getDescription());
-            existingCompetency.setTopic(competencyDetails.getTopic());
             existingCompetency.setStatus(competencyDetails.getStatus());
             Competency updatedCompetency = competencyRepository.save(existingCompetency);
             return ResponseEntity.ok(updatedCompetency);

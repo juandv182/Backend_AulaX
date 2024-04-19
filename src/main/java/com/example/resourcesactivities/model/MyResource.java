@@ -30,10 +30,4 @@ public class MyResource {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
-    public MyResource(Integer topicId, String s) {
-        topic =new Topic();
-        topic.setId(topicId);
-        name=s;
-    }
 }
