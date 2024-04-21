@@ -1,7 +1,9 @@
 package com.example.resourcesactivities.controller;
 
 import com.example.resourcesactivities.model.Competency;
+import com.example.resourcesactivities.model.Topic;
 import com.example.resourcesactivities.repository.CompetencyRepository;
+import com.example.resourcesactivities.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.Optional;
 public class CompetencyController {
     @Autowired
     private CompetencyRepository competencyRepository;
+    private TopicRepository topicRepository;
 
     @GetMapping
     public List<Competency> getAllCompetencies() {
@@ -29,7 +32,21 @@ public class CompetencyController {
         return competency.map(value -> ResponseEntity.ok().body(value))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
+    @GetMapping("/course/{courseId}")
+    public ResponseEntity<List<Competency>> getCompetenciesByCourseId(@PathVariable(value = "courseId") Integer courseId) {
+        List<Competency> competencies = competencyRepository.findAllByCourseId(courseId);
+        return ResponseEntity.ok(competencies);
+    }
+    @GetMapping("/{id}/topics")
+    public ResponseEntity<List<Topic>> getTopicsByCompetencyId(@PathVariable(value = "id") Integer competencyId) {
+        Optional<Competency> competency = competencyRepository.findById(competencyId);
+        if (competency.isPresent()) {
+            List<Topic> topics = topicRepository.findAllByCompetence(competency.get());
+            return ResponseEntity.ok(topics);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
     @PostMapping
     public ResponseEntity<Competency> createCompetency(@RequestBody Competency competency) {
         Competency savedCompetency = competencyRepository.save(competency);
