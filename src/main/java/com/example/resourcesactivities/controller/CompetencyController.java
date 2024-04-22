@@ -19,6 +19,7 @@ import java.util.Optional;
 public class CompetencyController {
     @Autowired
     private CompetencyRepository competencyRepository;
+    @Autowired
     private TopicRepository topicRepository;
 
     @GetMapping
