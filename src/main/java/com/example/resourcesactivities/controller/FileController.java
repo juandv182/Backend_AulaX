@@ -23,9 +23,16 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+
 
 @RestController
 @RequestMapping("/files")
@@ -37,6 +44,8 @@ public class FileController {
     @Autowired
     private MyResourceRepository myResourceRepository;
 
+    @Autowired
+    private AmazonS3 amazonS3;
 
     @GetMapping("/file/{name}")
     public ResponseEntity<String> checkIfFileExists(@PathVariable(value = "name") String fileName) {
@@ -96,39 +105,34 @@ public class FileController {
         if (myResource == null) {
             return ResponseEntity.badRequest().body("Resource with id " + resourceId + " not found.");
         }
-
+        String bucketName = "aulax";
         try {
-            String folderPath = "uploads/" + resourceId;
-            createFolderIfNotExists(folderPath);
-
             List<ResourceFile> savedFiles = files.stream()
                     .map(file -> {
                         try {
-                            String filePath = folderPath + "/" + file.getOriginalFilename();
-                            Path destPath = Paths.get(filePath);
-                            Files.copy(file.getInputStream(), destPath, StandardCopyOption.REPLACE_EXISTING);
+                            String keyName = resourceId + "/" + file.getOriginalFilename();
+                            ObjectMetadata metadata = new ObjectMetadata();
+                            metadata.setContentLength(file.getSize());
+                            metadata.setContentType(file.getContentType());
 
-                            Optional<ResourceFile> existingFileOpt = fileRepository.findByName(file.getOriginalFilename());
-                            if (existingFileOpt.isPresent()) {
-                                ResourceFile existingFile = existingFileOpt.get();
-                                return fileRepository.save(existingFile);
-                            } else {
-                                ResourceFile newFile = new ResourceFile();
-                                newFile.setName(file.getOriginalFilename());
-                                newFile.setFolder(filePath);
-                                newFile.setMyResource(myResource);
-                                newFile.setStatus(true);
-                                return fileRepository.save(newFile);
-                            }
+                            amazonS3.putObject(new PutObjectRequest(bucketName, keyName, file.getInputStream(), metadata));
+
+                            ResourceFile newFile = new ResourceFile();
+                            newFile.setName(file.getOriginalFilename());
+                            newFile.setFolder(bucketName + "/" + keyName);
+                            newFile.setMyResource(myResource);
+                            newFile.setStatus(true);
+                            return fileRepository.save(newFile);
                         } catch (IOException e) {
                             return null;
                         }
                     })
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
 
             return ResponseEntity.status(HttpStatus.CREATED).body(savedFiles);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload files.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload files to S3.");
         }
     }
 
