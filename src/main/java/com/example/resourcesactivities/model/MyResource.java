@@ -33,7 +33,7 @@ public class MyResource {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "resource",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ResourceFile> files;
 
