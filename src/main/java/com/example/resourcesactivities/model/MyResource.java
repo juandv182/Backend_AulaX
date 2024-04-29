@@ -36,5 +36,8 @@ public class MyResource {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<ResourceFile> files;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Activity> activities;
 
 }

@@ -1,5 +1,6 @@
 package com.example.resourcesactivities.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -23,9 +24,11 @@ public class Activity {
     private String description;
     @ManyToOne
     @JoinColumn(name = "resource_id")
+    @JsonBackReference
     private MyResource myResource;
     @ManyToOne
     @JoinColumn(name = "type_activity_id")
+    @JsonBackReference
     private TypeActivity typeActivity;
     private Boolean status;
     @CreationTimestamp
