@@ -7,6 +7,7 @@ import com.example.resourcesactivities.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
@@ -32,6 +33,7 @@ public class TopicController {
         return topic.map(value -> ResponseEntity.ok().body(value))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+    @Transactional
     @GetMapping("/{id}/resources")
     public ResponseEntity<List<MyResource>> getResourcesByTopicId(@PathVariable(value = "id") Integer topicId) {
         List<MyResource> resources = myResourceRepository.findByTopicId(topicId);
