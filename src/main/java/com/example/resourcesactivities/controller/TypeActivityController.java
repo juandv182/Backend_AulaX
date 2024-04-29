@@ -1,10 +1,12 @@
 package com.example.resourcesactivities.controller;
 
 import com.example.resourcesactivities.model.Activity;
+import com.example.resourcesactivities.model.MyResource;
 import com.example.resourcesactivities.model.ResourceFile;
 import com.example.resourcesactivities.model.TypeActivity;
 import com.example.resourcesactivities.repository.ActivityRepository;
 import com.example.resourcesactivities.repository.FileRepository;
+import com.example.resourcesactivities.repository.MyResourceRepository;
 import com.example.resourcesactivities.repository.TypeActivityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +27,8 @@ public class TypeActivityController {
     private FileRepository fileRepository;
     @Autowired
     private ActivityRepository activityRepository;
-
+    @Autowired
+    private MyResourceRepository myResourceRepository;
     @GetMapping
     public List<TypeActivity> getAllTypeActivities() {
         return typeActivityRepository.findAll();
@@ -38,10 +42,12 @@ public class TypeActivityController {
     }
     @Transactional
     @GetMapping("/{id}/files")
-    public ResponseEntity<List<Activity>> getFilesByTypeActivityId(@PathVariable(value = "id") Integer typeActivityId) {
-        List<Activity> activities = activityRepository.findByTypeActivityId(typeActivityId);
-        if (activities != null) {
-            return ResponseEntity.ok(activities);
+    public ResponseEntity<List<ResourceFile>> getFilesByTypeActivityId(@PathVariable(value = "id") Integer typeActivityId) {
+        List<MyResource> resources = myResourceRepository.findByTypeActivityId(typeActivityId);
+        List<ResourceFile> files = new ArrayList<>();
+        if (resources != null) {
+            resources.forEach(resource -> files.addAll(resource.getFiles()));
+            return ResponseEntity.ok(files);
         } else {
             return ResponseEntity.notFound().build();
         }
