@@ -21,6 +21,7 @@ public class ResourceFile {
     private UUID id;
     private String name;
     private String folder;
+    private String url;
     @ManyToOne
     @JoinColumn(name = "resource_id")
     private MyResource myResource;
