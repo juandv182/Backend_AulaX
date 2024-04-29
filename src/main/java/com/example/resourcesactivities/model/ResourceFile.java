@@ -1,5 +1,6 @@
 package com.example.resourcesactivities.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -24,6 +25,7 @@ public class ResourceFile {
     private String url;
     @ManyToOne
     @JoinColumn(name = "resource_id")
+    @JsonBackReference
     private MyResource myResource;
     private Boolean status;
     @CreationTimestamp

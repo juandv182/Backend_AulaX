@@ -1,5 +1,6 @@
 package com.example.resourcesactivities.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -35,6 +36,7 @@ public class Topic {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "topic",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "topic",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<MyResource> resources;
 }

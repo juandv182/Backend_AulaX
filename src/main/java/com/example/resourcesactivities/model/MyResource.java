@@ -1,11 +1,14 @@
 package com.example.resourcesactivities.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -23,11 +26,15 @@ public class MyResource {
     //private String file;
     @ManyToOne
     @JoinColumn(name = "topic_id")
+    @JsonBackReference
     private Topic topic;
     private Boolean status;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "resource",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<ResourceFile> files;
 
 }

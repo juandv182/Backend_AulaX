@@ -1,11 +1,14 @@
 package com.example.resourcesactivities.controller;
 
 import com.example.resourcesactivities.model.MyResource;
+import com.example.resourcesactivities.model.ResourceFile;
+import com.example.resourcesactivities.repository.FileRepository;
 import com.example.resourcesactivities.repository.MyResourceRepository;
 import com.example.resourcesactivities.service.ResourceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +23,8 @@ public class ResourceController {
 
     @Autowired
     private ResourceService resourceService;
+    @Autowired
+    private FileRepository fileRepository;
 
     @GetMapping
     public List<MyResource> getAllResources() {
@@ -32,7 +37,16 @@ public class ResourceController {
         return resource.map(value -> ResponseEntity.ok().body(value))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
+    @Transactional
+    @GetMapping("/{id}/files")
+    public ResponseEntity<List<ResourceFile>> getFilesByResourceId(@PathVariable(value = "id") Integer resourceId) {
+        List<ResourceFile> files = fileRepository.findByMyResourceId(resourceId);
+        if (files != null) {
+            return ResponseEntity.ok(files);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
     @PostMapping
     public ResponseEntity<MyResource> createResource(@RequestBody MyResource myResource) {
         MyResource savedMyResource = myResourceRepository.save(myResource);
