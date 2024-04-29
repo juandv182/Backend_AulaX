@@ -8,7 +8,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -33,11 +35,11 @@ public class MyResource {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<ResourceFile> files;
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ResourceFile> files =new HashSet<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<Activity> activities;
+    private Set<Activity> activities =new HashSet<>();
 
 }
