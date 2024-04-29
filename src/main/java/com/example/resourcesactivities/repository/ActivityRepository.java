@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface ActivityRepository extends JpaRepository<Activity, Integer> {
     List<Activity> findByTypeActivityId(Integer typeActivityId);
-    List<MyResource> findByResourceId(Integer resourceId);
+
 }
