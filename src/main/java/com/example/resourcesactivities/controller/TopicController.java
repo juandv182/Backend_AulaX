@@ -1,6 +1,8 @@
 package com.example.resourcesactivities.controller;
 
+import com.example.resourcesactivities.model.MyResource;
 import com.example.resourcesactivities.model.Topic;
+import com.example.resourcesactivities.repository.MyResourceRepository;
 import com.example.resourcesactivities.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +19,8 @@ import java.util.Optional;
 public class TopicController {
     @Autowired
     private TopicRepository topicRepository;
-
+    @Autowired
+    private MyResourceRepository myResourceRepository;
     @GetMapping
     public List<Topic> getAllTopics() {
         return topicRepository.findAll();
@@ -29,7 +32,15 @@ public class TopicController {
         return topic.map(value -> ResponseEntity.ok().body(value))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
-
+    @GetMapping("/{id}/resources")
+    public ResponseEntity<List<MyResource>> getResourcesByTopicId(@PathVariable(value = "id") Integer topicId) {
+        List<MyResource> resources = myResourceRepository.findByTopicId(topicId);
+        if (resources != null) {
+            return ResponseEntity.ok(resources);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
     @PostMapping
     public ResponseEntity<Topic> createTopic(@RequestBody Topic topic) {
         Topic savedTopic = topicRepository.save(topic);
