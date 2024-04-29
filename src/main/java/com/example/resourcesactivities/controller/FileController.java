@@ -46,7 +46,14 @@ public class FileController {
 
     @Autowired
     private AmazonS3 amazonS3;
-
+    @GetMapping()
+    public ResponseEntity<List<ResourceFile>> getAllFiles() {
+        List<ResourceFile> files = fileRepository.findAll();
+        if (files.isEmpty()) {
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.ok(files);
+    }
     @GetMapping("/file/{name}")
     public ResponseEntity<String> checkIfFileExists(@PathVariable(value = "name") String fileName) {
         Optional<ResourceFile> fileOptional = fileRepository.findByName(fileName);
@@ -117,9 +124,12 @@ public class FileController {
 
                             amazonS3.putObject(new PutObjectRequest(bucketName, keyName, file.getInputStream(), metadata));
 
+                            String fileUrl = amazonS3.getUrl(bucketName, keyName).toString();
+
                             ResourceFile newFile = new ResourceFile();
                             newFile.setName(file.getOriginalFilename());
                             newFile.setFolder(bucketName + "/" + keyName);
+                            newFile.setUrl(fileUrl);
                             newFile.setMyResource(myResource);
                             newFile.setStatus(true);
                             return fileRepository.save(newFile);
@@ -135,6 +145,7 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload files to S3.");
         }
     }
+
 
     private void createFolderIfNotExists(String folderPath) {
         File folder = new File(folderPath);
