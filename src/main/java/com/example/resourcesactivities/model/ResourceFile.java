@@ -18,7 +18,7 @@ import java.util.UUID;
 @Table(name = "files")
 public class ResourceFile {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "UUID")
     private UUID id;
     private String name;
     private String folder;
