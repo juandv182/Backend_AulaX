@@ -17,6 +17,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/resources")
+@CrossOrigin(originPatterns = "*")
 public class ResourceController {
     @Autowired
     private MyResourceRepository myResourceRepository;

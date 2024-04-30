@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/activities")
+@CrossOrigin(originPatterns = "*")
 public class ActivityController {
     @Autowired
     private ActivityRepository activityRepository;

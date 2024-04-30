@@ -15,6 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/quizzes")
+@CrossOrigin(originPatterns = "*")
 public class QuizzController {
     @Autowired
     private QuizzRepository quizzRepository;

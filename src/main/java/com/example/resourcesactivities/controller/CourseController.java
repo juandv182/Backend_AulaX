@@ -12,6 +12,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/courses")
+@CrossOrigin(originPatterns = "*")
 public class CourseController {
     @Autowired
     private CourseRepository courseRepository;

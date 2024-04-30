@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/alternatives")
+@CrossOrigin(originPatterns = "*")
 public class AlternativeController {
     @Autowired
     private AlternativeRepository alternativeRepository;

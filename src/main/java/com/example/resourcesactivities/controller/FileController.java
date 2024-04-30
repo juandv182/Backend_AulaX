@@ -1,7 +1,9 @@
 package com.example.resourcesactivities.controller;
 
 import com.example.resourcesactivities.dto.ResourceFileDTO;
+import com.example.resourcesactivities.model.Activity;
 import com.example.resourcesactivities.model.MyResource;
+import com.example.resourcesactivities.model.Question;
 import com.example.resourcesactivities.model.ResourceFile;
 import com.example.resourcesactivities.repository.MyResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 @RestController
 @RequestMapping("/files")
+@CrossOrigin(originPatterns = "*")
 public class FileController {
 
     @Autowired
@@ -65,20 +68,10 @@ public class FileController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> getFileById(@PathVariable(value = "id") UUID id) {
-        ResourceFile file = fileRepository.findById(id).orElse(null);
-        if (file == null) {
-            return ResponseEntity.notFound().build();
-        }
-        try {
-            Path filePath = Paths.get(file.getFolder());
-            Resource resource = new UrlResource(filePath.toUri());
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-                    .body(resource);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<ResourceFile> getFileById(@PathVariable(value = "id") UUID id) {
+        Optional<ResourceFile> file = fileRepository.findById(id);
+        return file.map(value -> ResponseEntity.ok().body(value))
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/resource/{id}")
@@ -101,8 +94,8 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.OK).body(filesDto);
     }
 
-    @PostMapping
-    public ResponseEntity<?> createFiles(@RequestParam("files") List<MultipartFile> files,
+    @PostMapping("/s3")
+    public ResponseEntity<?> createFilesS3(@RequestParam("files") List<MultipartFile> files,
                                          @RequestParam("resource_id") Integer resourceId) {
         if (files.isEmpty()) {
             return ResponseEntity.badRequest().body("Please select at least one file.");
@@ -145,7 +138,11 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload files to S3.");
         }
     }
-
+    @PostMapping
+    public ResponseEntity<ResourceFile> createFile(@RequestBody ResourceFile file) {
+        ResourceFile savedFile = fileRepository.save(file);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedFile);
+    }
 
     private void createFolderIfNotExists(String folderPath) {
         File folder = new File(folderPath);

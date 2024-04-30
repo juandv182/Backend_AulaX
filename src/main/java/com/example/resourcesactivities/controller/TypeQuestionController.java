@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/type_questions")
+@CrossOrigin(originPatterns = "*")
 public class TypeQuestionController {
     @Autowired
     private TypeQuestionRepository typeQuestionRepository;

@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 @RestController
 @RequestMapping("/bucket")
+@CrossOrigin(originPatterns = "*")
 public class AwsS3Controller {
     @Autowired
     AwsS3Service bucketService;

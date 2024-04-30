@@ -20,6 +20,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/types_activities")
+@CrossOrigin(originPatterns = "*")
 public class TypeActivityController {
     @Autowired
     private TypeActivityRepository typeActivityRepository;
