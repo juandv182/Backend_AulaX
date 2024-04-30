@@ -37,7 +37,7 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 
 
 @RestController
-@RequestMapping("/files")
+@RequestMapping(value="/files")
 @CrossOrigin(originPatterns = "*")
 public class FileController {
 
@@ -138,10 +138,15 @@ public class FileController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to upload files to S3.");
         }
     }
-    @PostMapping
+
+    @PostMapping(consumes = "application/json")
     public ResponseEntity<ResourceFile> createFile(@RequestBody ResourceFile file) {
-        ResourceFile savedFile = fileRepository.save(file);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedFile);
+        try {
+            ResourceFile savedFile = fileRepository.save(file);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedFile);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     private void createFolderIfNotExists(String folderPath) {
