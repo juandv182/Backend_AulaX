@@ -1,9 +1,7 @@
 package com.example.resourcesactivities.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -21,7 +19,6 @@ import java.util.Set;
 @Setter
 @ToString
 @Table(name = "resources")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class MyResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -39,8 +36,10 @@ public class MyResource {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<ResourceFile> files =new HashSet<>();
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Activity> activities =new HashSet<>();
 
 }
