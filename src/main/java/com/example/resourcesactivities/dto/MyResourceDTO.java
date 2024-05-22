@@ -1,8 +1,10 @@
 package com.example.resourcesactivities.dto;
-import com.example.resourcesactivities.model.Topic;
+
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -12,7 +14,7 @@ public class MyResourceDTO {
     private Integer id;
     private String name;
     private String description;
-    private Topic topic;
+    private Integer topicId;
     private Boolean status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

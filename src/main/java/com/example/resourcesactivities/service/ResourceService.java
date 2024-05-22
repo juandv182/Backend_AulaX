@@ -5,8 +5,10 @@ import com.example.resourcesactivities.dto.MyResourceDTO;
 import com.example.resourcesactivities.dto.ResourceFileDTO;
 import com.example.resourcesactivities.model.MyResource;
 import com.example.resourcesactivities.model.ResourceFile;
+import com.example.resourcesactivities.model.Topic;
 import com.example.resourcesactivities.repository.FileRepository;
 import com.example.resourcesactivities.repository.MyResourceRepository;
+import com.example.resourcesactivities.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,9 @@ public class ResourceService {
 
     @Autowired
     private FileRepository fileRepository;
+
+    @Autowired
+    private TopicRepository topicRepository; // Agregar repositorio de Topic
 
     public List<MyResourceDTO> getAllResources() {
         return myResourceRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
@@ -45,6 +50,16 @@ public class ResourceService {
         myResource.setDescription(myResourceDTO.getDescription());
         myResource.setStatus(myResourceDTO.getStatus());
 
+        // Verificar que topicId no sea null y que el Topic exista
+        if (myResourceDTO.getTopicId() != null) {
+            Optional<Topic> topic = topicRepository.findById(myResourceDTO.getTopicId());
+            if (topic.isPresent()) {
+                myResource.setTopic(topic.get());
+            } else {
+                throw new IllegalArgumentException("Invalid topicId");
+            }
+        }
+
         Set<ResourceFile> files = myResourceDTO.getFiles().stream().map(fileDTO -> {
             ResourceFile file = new ResourceFile();
             file.setName(fileDTO.getName());
@@ -52,7 +67,7 @@ public class ResourceService {
             file.setStatus(fileDTO.getStatus());
             file.setMyResource(myResource);
             return file;
-        }).collect(Collectors.toSet());
+        }).collect(Collectors.toSet());  // Cambiar a Collectors.toSet()
         myResource.setFiles(files);
 
         MyResource savedResource = myResourceRepository.save(myResource);
@@ -66,8 +81,18 @@ public class ResourceService {
             MyResource existingMyResource = optionalResource.get();
             existingMyResource.setName(myResourceDTO.getName());
             existingMyResource.setDescription(myResourceDTO.getDescription());
-            existingMyResource.setTopic(myResourceDTO.getTopic());
             existingMyResource.setStatus(myResourceDTO.getStatus());
+
+            // Verificar que topicId no sea null y que el Topic exista
+            if (myResourceDTO.getTopicId() != null) {
+                Optional<Topic> topic = topicRepository.findById(myResourceDTO.getTopicId());
+                if (topic.isPresent()) {
+                    existingMyResource.setTopic(topic.get());
+                } else {
+                    throw new IllegalArgumentException("Invalid topicId");
+                }
+            }
+
             MyResource updatedMyResource = myResourceRepository.save(existingMyResource);
             return convertToDTO(updatedMyResource);
         } else {
@@ -98,10 +123,10 @@ public class ResourceService {
 
         // Convertir actividades de MyResource a ActivityDTO
         Set<ActivityDTO> activityDTOs = myResource.getActivities().stream().map(activity ->
-                new ActivityDTO(activity.getId(), activity.getName(), activity.getDescription(), activity.getStatus(), activity.getCreatedAt(), activity.getUpdatedAt(),activity.getMyResource().getId(),activity.getTypeActivity().getId())
+                new ActivityDTO(activity.getId(), activity.getName(), activity.getDescription(), activity.getStatus(), activity.getCreatedAt(), activity.getUpdatedAt(), activity.getMyResource().getId(), activity.getTypeActivity().getId())
         ).collect(Collectors.toSet());
 
-        return new MyResourceDTO(myResource.getId(), myResource.getName(), myResource.getDescription(), myResource.getTopic(),myResource.getStatus(), myResource.getCreatedAt(), myResource.getUpdatedAt(), fileDTOs, activityDTOs);
+        return new MyResourceDTO(myResource.getId(), myResource.getName(), myResource.getDescription(), myResource.getTopic().getId(), myResource.getStatus(), myResource.getCreatedAt(), myResource.getUpdatedAt(), fileDTOs, activityDTOs);
     }
 
     private ResourceFileDTO convertToDTO(ResourceFile resourceFile) {
