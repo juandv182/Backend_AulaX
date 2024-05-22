@@ -30,17 +30,19 @@ public class TypeActivityController {
     private ActivityRepository activityRepository;
     @Autowired
     private MyResourceRepository myResourceRepository;
+    @Transactional
     @GetMapping
     public List<TypeActivity> getAllTypeActivities() {
         return typeActivityRepository.findAll();
     }
-
+    @Transactional
     @GetMapping("/{id}")
     public ResponseEntity<TypeActivity> getTypeActivityById(@PathVariable(value = "id") Integer typeActivityId) {
         Optional<TypeActivity> typeActivity = typeActivityRepository.findById(typeActivityId);
         return typeActivity.map(value -> ResponseEntity.ok().body(value))
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
     @Transactional
     @GetMapping("/{id}/files")
     public ResponseEntity<List<ResourceFile>> getFilesByTypeActivityId(@PathVariable(value = "id") Integer typeActivityId) {
@@ -53,12 +55,13 @@ public class TypeActivityController {
             return ResponseEntity.notFound().build();
         }
     }
+    @Transactional
     @PostMapping
     public ResponseEntity<TypeActivity> createTypeActivity(@RequestBody TypeActivity typeActivity) {
         TypeActivity savedTypeActivity = typeActivityRepository.save(typeActivity);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTypeActivity);
     }
-
+    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<TypeActivity> updateTypeActivity(@PathVariable(value = "id") Integer typeActivityId,
                                                            @RequestBody TypeActivity typeActivityDetails) {
@@ -74,7 +77,7 @@ public class TypeActivityController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    @Transactional
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteTypeActivity(@PathVariable(value = "id") Integer typeActivityId) {
         Optional<TypeActivity> typeActivity = typeActivityRepository.findById(typeActivityId);
