@@ -1,6 +1,9 @@
 package com.example.resourcesactivities.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -16,6 +19,8 @@ import java.util.UUID;
 @Setter
 @ToString
 @Table(name = "files")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ResourceFile {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -23,9 +28,8 @@ public class ResourceFile {
     private String name;
     private String folder;
     private String url;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id")
-    @JsonBackReference
     private MyResource myResource;
     private Boolean status;
     @CreationTimestamp

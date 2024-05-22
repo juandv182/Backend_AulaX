@@ -1,7 +1,6 @@
 package com.example.resourcesactivities.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -19,6 +18,8 @@ import java.util.Set;
 @Setter
 @ToString
 @Table(name = "resources")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class MyResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,18 +29,15 @@ public class MyResource {
     //private String file;
     @ManyToOne
     @JoinColumn(name = "topic_id")
-    @JsonBackReference
     private Topic topic;
     private Boolean status;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ResourceFile> files =new HashSet<>();
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @OneToMany(mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Activity> activities =new HashSet<>();
 
 }
