@@ -25,5 +25,8 @@ public class Course {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @ManyToOne
+    @JoinColumn(name="user_id")
+    private User user;
     // Getters and setters
 }
