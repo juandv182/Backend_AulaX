@@ -9,7 +9,7 @@ import javax.validation.constraints.Size;
 
 public class UserRequest implements IUser {
     @NotBlank
-    @Size(min = 4, max = 8)
+    @Size(min = 4, max = 12)
     private String username;
 
     @NotEmpty

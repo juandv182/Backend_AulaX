@@ -22,7 +22,7 @@ public class User implements IUser{
     private Long id;
 
     @NotBlank
-    @Size(min = 4, max = 8)
+    @Size(min = 4, max = 12)
     @Column(unique = true)
     private String username;
 
@@ -50,5 +50,11 @@ public class User implements IUser{
     @Transient
     private boolean padrefam;
 
+    @OneToMany(mappedBy = "padreFamilia")
+    private List<User> hijos;
+
+    @ManyToOne
+    @JoinColumn(name = "padre_familia_id")
+    private User padreFamilia;
 
 }

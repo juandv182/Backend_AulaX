@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,6 +56,17 @@ public class UserServiceImpl implements UserService {
     public UserDTO save(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(getRoles( user));
+
+        if (user.isPadrefam() && user.getHijos() != null) {
+            user.getHijos().forEach(hijo -> {
+                User hijoEntity = repository.findById(hijo.getId()).orElseThrow();
+                hijoEntity.setPadreFamilia(user);
+                repository.save(hijoEntity);
+            });
+        }
+        if (user.getFechaNacimiento() == null || user.getFechaNacimiento().isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Fecha de nacimiento no válida");
+        }
         return DtoMapperUser.builder().setUser(repository.save(user)).build();
     }
 
