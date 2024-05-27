@@ -35,7 +35,7 @@ public class User implements IUser{
     @Column(unique = true)
     private String email;
 
-    @NotNull
+    @NotNull(message = "La fecha de nacimiento no puede ser nula")
     private LocalDate fechaNacimiento;
 
     @ManyToMany
@@ -45,9 +45,9 @@ public class User implements IUser{
             inverseJoinColumns = @JoinColumn(name="role_id"),
             uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "role_id"})})
     private List<Role> roles;
-    @Transient
+
     private boolean docente;
-    @Transient
+
     private boolean padrefam;
 
     @OneToMany(mappedBy = "padreFamilia")

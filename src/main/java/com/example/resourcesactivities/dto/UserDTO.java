@@ -13,10 +13,11 @@ public class UserDTO {
     private List<UserDTO> hijos;
     private UserDTO padreFamilia;
 
-    public UserDTO(Long id, String username, String email, boolean docente, boolean padrefam) {
+    public UserDTO(Long id, String username, String email,LocalDate fechaNacimiento, boolean docente, boolean padrefam) {
         this.id = id;
         this.username = username;
         this.email = email;
+        this.fechaNacimiento = fechaNacimiento;
         this.docente = docente;
         this.padrefam = padrefam;
     }
