@@ -3,11 +3,10 @@ package com.example.resourcesactivities.model;
 import lombok.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -17,7 +16,7 @@ import java.util.List;
 @Setter
 @ToString
 @Table(name="users")
-public class User {
+public class User implements IUser{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,10 +29,14 @@ public class User {
     @NotBlank
     private String password;
 
+
     @NotEmpty
     @Email
     @Column(unique = true)
     private String email;
+
+    @NotNull
+    private LocalDate fechaNacimiento;
 
     @ManyToMany
     @JoinTable(
@@ -42,5 +45,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name="role_id"),
             uniqueConstraints = { @UniqueConstraint(columnNames = {"user_id", "role_id"})})
     private List<Role> roles;
+    @Transient
+    private boolean docente;
+    @Transient
+    private boolean padrefam;
+
 
 }

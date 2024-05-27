@@ -1,2 +1,12 @@
-package com.example.resourcesactivities.auth;public class SimpleGrantedAuthorityJsonCreator {
+package com.example.resourcesactivities.auth;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public abstract class SimpleGrantedAuthorityJsonCreator {
+
+    @JsonCreator
+    public SimpleGrantedAuthorityJsonCreator(@JsonProperty("authority") String role) {
+    }
+
 }

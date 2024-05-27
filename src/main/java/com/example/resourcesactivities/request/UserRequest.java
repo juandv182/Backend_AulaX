@@ -1,11 +1,13 @@
 package com.example.resourcesactivities.request;
 
+import com.example.resourcesactivities.model.IUser;
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
-public class UserRequest {
+public class UserRequest implements IUser {
     @NotBlank
     @Size(min = 4, max = 8)
     private String username;
@@ -13,6 +15,8 @@ public class UserRequest {
     @NotEmpty
     @Email
     private String email;
+    private boolean docente;
+    private boolean padrefam;
 
     public String getUsername() {
         return username;
@@ -25,5 +29,20 @@ public class UserRequest {
     }
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    @Override
+    public boolean isDocente() {
+        return docente;
+    }
+    public void setDocente(boolean docente) {
+        this.docente = docente;
+    }
+    @Override
+    public boolean isPadrefam() {
+        return padrefam;
+    }
+    public void setPadrefam(boolean padrefam) {
+        this.padrefam = padrefam;
     }
 }
