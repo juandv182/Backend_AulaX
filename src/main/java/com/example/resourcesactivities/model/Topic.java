@@ -19,8 +19,6 @@ import java.util.List;
 @Setter
 @ToString
 @Table(name = "topics")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class Topic {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +39,6 @@ public class Topic {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @OneToMany(mappedBy = "topic",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "topic",fetch = FetchType.LAZY,cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MyResource> resources;
 }

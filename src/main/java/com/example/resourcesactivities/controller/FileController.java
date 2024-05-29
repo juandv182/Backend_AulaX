@@ -1,16 +1,11 @@
 package com.example.resourcesactivities.controller;
 
 import com.example.resourcesactivities.dto.ResourceFileDTO;
-import com.example.resourcesactivities.model.Activity;
 import com.example.resourcesactivities.model.MyResource;
-import com.example.resourcesactivities.model.Question;
 import com.example.resourcesactivities.model.ResourceFile;
 import com.example.resourcesactivities.repository.MyResourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.resourcesactivities.repository.FileRepository;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +14,6 @@ import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBui
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -31,7 +22,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
@@ -121,7 +111,6 @@ public class FileController {
 
                             ResourceFile newFile = new ResourceFile();
                             newFile.setName(file.getOriginalFilename());
-                            newFile.setFolder(bucketName + "/" + keyName);
                             newFile.setUrl(fileUrl);
                             newFile.setMyResource(myResource);
                             newFile.setStatus(true);

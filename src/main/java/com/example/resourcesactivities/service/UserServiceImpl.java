@@ -57,16 +57,10 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles(getRoles( user));
 
-        if (user.isPadrefam() && user.getHijos() != null) {
-            user.getHijos().forEach(hijo -> {
-                User hijoEntity = repository.findById(hijo.getId()).orElseThrow();
-                hijoEntity.setPadreFamilia(user);
-                repository.save(hijoEntity);
-            });
-        }
         if (user.getFechaNacimiento() == null || user.getFechaNacimiento().isAfter(LocalDate.now())) {
             throw new IllegalArgumentException("Fecha de nacimiento no válida");
         }
+
         return DtoMapperUser.builder().setUser(repository.save(user)).build();
     }
 
@@ -106,9 +100,9 @@ public class UserServiceImpl implements UserService {
             }
         }
         if (user.isPadrefam()) {
-            Optional<Role> oa = roleRepository.findByName("ROLE_PADREFAM");
-            if (oa.isPresent()) {
-                roles.add(oa.orElseThrow());
+            Optional<Role> op = roleRepository.findByName("ROLE_PADREFAM");
+            if (op.isPresent()) {
+                roles.add(op.orElseThrow());
             }
         }
         return roles;

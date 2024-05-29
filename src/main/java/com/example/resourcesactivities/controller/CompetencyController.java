@@ -1,5 +1,6 @@
 package com.example.resourcesactivities.controller;
 
+import com.example.resourcesactivities.dto.TopicDTO;
 import com.example.resourcesactivities.model.Competency;
 import com.example.resourcesactivities.model.Topic;
 import com.example.resourcesactivities.repository.CompetencyRepository;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/competencies")
@@ -35,11 +37,24 @@ public class CompetencyController {
     }
 
     @GetMapping("/{id}/topics")
-    public ResponseEntity<List<Topic>> getTopicsByCompetencyId(@PathVariable(value = "id") Integer competencyId) {
+    public ResponseEntity<List<TopicDTO>> getTopicsByCompetencyId(@PathVariable(value = "id") Integer competencyId) {
         Optional<Competency> competency = competencyRepository.findById(competencyId);
         if (competency.isPresent()) {
             List<Topic> topics = topicRepository.findAllByCompetence(competency.get());
-            return ResponseEntity.ok(topics);
+            List<TopicDTO> topicsDTO =topics.stream().map(t->{
+                return TopicDTO.builder()
+                        .id(t.getId())
+                        .name(t.getName())
+                        .description((t.getDescription()))
+                        .course((t.getCourse()))
+                        .learningUnit(t.getLearningUnit())
+                        .competence(t.getCompetence())
+                        .status(t.getStatus())
+                        .createdAt(t.getCreatedAt())
+                        .updatedAt(t.getUpdatedAt())
+                        .build();
+            }).collect(Collectors.toList());
+            return ResponseEntity.ok(topicsDTO);
         } else {
             return ResponseEntity.notFound().build();
         }

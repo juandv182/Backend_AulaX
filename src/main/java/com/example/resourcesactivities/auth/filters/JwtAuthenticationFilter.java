@@ -64,7 +64,6 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
         String username = ((org.springframework.security.core.userdetails.User) authResult.getPrincipal())
                 .getUsername();
-
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
         boolean isDocente = roles.stream().anyMatch(r -> r.getAuthority().equals("ROLE_DOCENTE"));
         boolean isPadreFam = roles.stream().anyMatch(r -> r.getAuthority().equals("ROLE_PADREFAM"));

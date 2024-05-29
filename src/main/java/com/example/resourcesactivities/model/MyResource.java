@@ -18,8 +18,6 @@ import java.util.Set;
 @Setter
 @ToString
 @Table(name = "resources")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class MyResource {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,7 +25,7 @@ public class MyResource {
     private String name;
     private String description;
     //private String file;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "topic_id")
     private Topic topic;
     private Boolean status;
@@ -35,9 +33,8 @@ public class MyResource {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @OneToMany(mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "myResource",fetch=FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ResourceFile> files =new HashSet<>();
-    @OneToMany(mappedBy = "myResource",cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Activity> activities =new HashSet<>();
+
 
 }

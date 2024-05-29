@@ -19,14 +19,11 @@ import java.util.UUID;
 @Setter
 @ToString
 @Table(name = "files")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 public class ResourceFile {
     @Id
     @GeneratedValue(generator = "UUID")
     private UUID id;
     private String name;
-    private String folder;
     private String url;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id")

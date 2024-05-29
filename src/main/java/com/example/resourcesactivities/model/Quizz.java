@@ -21,9 +21,7 @@ public class Quizz {
     private Integer id;
     private String name;
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "activity_id")
-    private Activity activity;
+
     private Integer grade;
     private Boolean status;
     @CreationTimestamp

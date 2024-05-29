@@ -54,13 +54,5 @@ public class ResourceController {
         return isDeleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
-    @PostMapping("/search")
-    public ResponseEntity<List<MyResourceDTO>> searchResources(@RequestBody Map<String, Object> requestBody) {
-        Integer topicId = (Integer) requestBody.get("topic_id");
-        List<Integer> competencies = (List<Integer>) requestBody.get("competencies");
-        List<Integer> courses = (List<Integer>) requestBody.get("courses");
 
-        List<MyResourceDTO> myResources = resourceService.searchResources(topicId, competencies, courses);
-        return myResources.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(myResources);
-    }
 }

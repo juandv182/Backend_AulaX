@@ -25,9 +25,6 @@ public class Question {
     @ManyToOne
     @JoinColumn(name = "quizz_id")
     private Quizz quizz;
-    @ManyToOne
-    @JoinColumn(name = "type_question_id")
-    private TypeQuestion typeQuestion;
     private Decimal points;
     private Boolean status;
     @CreationTimestamp

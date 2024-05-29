@@ -10,16 +10,18 @@ public class UserDTO {
     private LocalDate fechaNacimiento;
     private boolean docente;
     private boolean padrefam;
-    private List<UserDTO> hijos;
-    private UserDTO padreFamilia;
+    private Long id_hijo;
 
-    public UserDTO(Long id, String username, String email,LocalDate fechaNacimiento, boolean docente, boolean padrefam) {
+    public UserDTO(Long id, String username, String email,LocalDate fechaNacimiento,
+                   boolean docente, boolean padrefam, Long id_hijo) {
         this.id = id;
         this.username = username;
         this.email = email;
         this.fechaNacimiento = fechaNacimiento;
         this.docente = docente;
         this.padrefam = padrefam;
+        this.id_hijo = id_hijo;
+
     }
 
     public UserDTO() {
@@ -73,19 +75,11 @@ public class UserDTO {
         this.padrefam = padrefam;
     }
 
-    public List<UserDTO> getHijos() {
-        return hijos;
+    public Long getId_hijo() {
+        return id_hijo;
     }
 
-    public void setHijos(List<UserDTO> hijos) {
-        this.hijos = hijos;
-    }
-
-    public UserDTO getPadreFamilia() {
-        return padreFamilia;
-    }
-
-    public void setPadreFamilia(UserDTO padreFamilia) {
-        this.padreFamilia = padreFamilia;
+    public void setId_hijo(Long id_hijo) {
+        this.id_hijo = id_hijo;
     }
 }

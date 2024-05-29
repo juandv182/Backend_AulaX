@@ -29,6 +29,5 @@ public class TypeActivity {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
-    @OneToMany(mappedBy = "typeActivity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Activity> activities;
+
 }

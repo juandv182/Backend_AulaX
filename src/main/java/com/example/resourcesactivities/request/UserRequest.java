@@ -2,10 +2,8 @@ package com.example.resourcesactivities.request;
 
 import com.example.resourcesactivities.model.IUser;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
+import java.time.LocalDate;
 
 public class UserRequest implements IUser {
     @NotBlank
@@ -15,6 +13,7 @@ public class UserRequest implements IUser {
     @NotEmpty
     @Email
     private String email;
+
     private boolean docente;
     private boolean padrefam;
 

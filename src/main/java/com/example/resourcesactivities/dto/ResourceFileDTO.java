@@ -1,15 +1,17 @@
 package com.example.resourcesactivities.dto;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResourceFileDTO {
 
     private UUID id;
@@ -18,4 +20,16 @@ public class ResourceFileDTO {
     private Boolean status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private MyResourceDTO resource;
+
+    public ResourceFileDTO(UUID id, String name, String url, Boolean status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id=id;
+        this.name=name;
+        this.url=url;
+        this.status=status;
+        this.createdAt=createdAt;
+        this.updatedAt=updatedAt;
+
+
+    }
 }

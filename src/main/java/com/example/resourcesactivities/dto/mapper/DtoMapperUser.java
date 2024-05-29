@@ -25,25 +25,19 @@ public class DtoMapperUser {
         if (user == null) {
             throw new RuntimeException("Debe pasar el entity user!");
         }
-
-        List<UserDTO> hijos = user.getHijos() != null ? user.getHijos().stream()
-                .map(hijo -> DtoMapperUser.builder().setUser(hijo).build())
-                .collect(Collectors.toList()) : null;
-
-        UserDTO padreFamilia = user.getPadreFamilia() != null ?
-                DtoMapperUser.builder().setUser(user.getPadreFamilia()).build() : null;
-
+        boolean isDocente = user.getRoles().stream().anyMatch(r -> "ROLE_DOCENTE".equals(r.getName()));
+        boolean isPadrefam = user.getRoles().stream().anyMatch(r -> "ROLE_PADREFAM".equals(r.getName()));
         UserDTO userDTO = new UserDTO(
                 this.user.getId(),
                 this.user.getUsername(),
                 this.user.getEmail(),
                 this.user.getFechaNacimiento(),
-                this.user.isDocente(),
-                this.user.isPadrefam()
+                isDocente,
+                isPadrefam,
+                this.user.getId_hijo()
+
         );
 
-        userDTO.setHijos(hijos);
-        userDTO.setPadreFamilia(padreFamilia);
 
         return userDTO;
     }

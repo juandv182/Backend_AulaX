@@ -1,12 +1,14 @@
 package com.example.resourcesactivities.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.time.LocalDate;
-import java.util.Date;
+
 import java.util.List;
 
 @Entity
@@ -14,7 +16,6 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@ToString
 @Table(name="users")
 public class User implements IUser{
     @Id
@@ -50,11 +51,6 @@ public class User implements IUser{
 
     private boolean padrefam;
 
-    @OneToMany(mappedBy = "padreFamilia")
-    private List<User> hijos;
-
-    @ManyToOne
-    @JoinColumn(name = "padre_familia_id")
-    private User padreFamilia;
+    private Long id_hijo;
 
 }
