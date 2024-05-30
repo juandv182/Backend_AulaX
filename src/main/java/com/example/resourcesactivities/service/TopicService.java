@@ -42,7 +42,7 @@ public class TopicService {
     @Transactional
     public TopicDTO getTopicById(Integer id) {
         Topic topic=repository.findById(id).
-                orElseThrow(() -> new ExpressionException("Tema no encontrado con ID: " + id));
+                orElseThrow(() -> new RuntimeException("Tema no encontrado con ID: " + id));
 
         return TopicDTO.builder()
                 .id(topic.getId())

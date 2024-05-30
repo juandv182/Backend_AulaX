@@ -41,14 +41,15 @@ public class QuizzController {
         QuizzDTO qdto = service.save(quizzdto);
         return ResponseEntity.status(HttpStatus.CREATED).body(qdto);
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateQuizz(@RequestBody QuizzDTO quizzdto, @PathVariable Integer id) {
+        quizzdto.setId(id);
+        service.update(quizzdto);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteQuizz(@PathVariable(value = "id") Integer quizzId) {
-        Optional<Quizz> quizz = quizzRepository.findById(quizzId);
-        if (quizz.isPresent()) {
-            quizzRepository.delete(quizz.get());
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        service.delete(quizzId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

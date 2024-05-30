@@ -105,5 +105,39 @@ public class QuizzService {
         quizzDTO.setId(quizz.getId());
         return quizzDTO;
     }
+    @Transactional
+    public void update(QuizzDTO quizzDTO){
+        quizzRepository.findById(quizzDTO.getId()).
+                orElseThrow(() -> new RuntimeException("No se encontro el cuestionario a actualizar"));
+        Quizz quizz = new Quizz();
+        quizz.setName(quizzDTO.getName());
+        quizz.setNota(quizzDTO.getNota());
+        MyResourceDTO rdto = quizzDTO.getMyResource();
+        MyResource r = new MyResource();
+        r.setId(rdto.getId());
+        r.setDescription(rdto.getDescription());
+        r.setName(rdto.getName());
+        r.setStatus(rdto.getStatus());
+        r.setCreatedAt(rdto.getCreatedAt());
+        r.setUpdatedAt(rdto.getUpdatedAt());
+        TopicDTO tdto=rdto.getTopic();
+        Topic t=new Topic();
+        t.setId(tdto.getId());
+        r.setTopic(t);
+        TypeQuizzDTO tqdto=quizzDTO.getTypeQuizz();
+        TypeQuizz tq= new TypeQuizz();
+        tq.setId(tqdto.getId());
+        tq.setName(tqdto.getName());
+        quizz.setMyResource(r);
+        quizz.setTypeQuizz(tq);
+        quizz.setCreatedAt(quizzDTO.getCreatedAt());
+        quizzRepository.save(quizz);
+    }
+    @Transactional
+    public void delete(Integer id){
+        quizzRepository.findById(id)
+        .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + id));
+        quizzRepository.deleteById(id);
+    }
 
 }

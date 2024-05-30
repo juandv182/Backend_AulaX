@@ -44,7 +44,6 @@ public class SpringSecurityConfig {
         return http.authorizeHttpRequests()
                 .antMatchers(HttpMethod.GET, "/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/**").permitAll()
-
                 .antMatchers(HttpMethod.PUT, "/**").permitAll()
                 .antMatchers(HttpMethod.DELETE, "/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "PADREFAM")
