@@ -3,6 +3,7 @@ package com.example.resourcesactivities.controller;
 
 
 import com.example.resourcesactivities.dto.QuizzDTO;
+import com.example.resourcesactivities.dto.TopicDTO;
 import com.example.resourcesactivities.model.Course;
 import com.example.resourcesactivities.model.Quizz;
 import com.example.resourcesactivities.repository.QuizzRepository;
@@ -30,16 +31,15 @@ public class QuizzController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Quizz> getQuizzById(@PathVariable(value = "id") Integer quizzId) {
-        Optional<Quizz> quizz = quizzRepository.findById(quizzId);
-        return quizz.map(value -> ResponseEntity.ok().body(value))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<QuizzDTO> getQuizzById(@PathVariable(value = "id") Integer quizzId) {
+        QuizzDTO quizz = service.getById(quizzId);
+        return quizz != null ? ResponseEntity.ok().body(quizz) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Quizz> createQuizz(@RequestBody Quizz quizz) {
-        Quizz savedQuizz = quizzRepository.save(quizz);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedQuizz);
+    public ResponseEntity<QuizzDTO> createQuizz(@RequestBody QuizzDTO quizzdto) {
+        QuizzDTO qdto = service.save(quizzdto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(qdto);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteQuizz(@PathVariable(value = "id") Integer quizzId) {
