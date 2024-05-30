@@ -7,6 +7,8 @@ import software.amazon.ion.Decimal;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -20,12 +22,16 @@ public class Quizz {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String description;
-
-    private Integer grade;
-    private Boolean status;
+    private Double nota;
     @CreationTimestamp
     private LocalDateTime createdAt;
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "resource_id")
+    private MyResource myResource;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "typequizz_id")
+    private TypeQuizz typeQuizz;
+    @OneToMany(mappedBy = "quizz",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Question> questions =new HashSet<>();
+
 }

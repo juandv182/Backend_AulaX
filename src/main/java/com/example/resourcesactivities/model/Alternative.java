@@ -18,13 +18,11 @@ public class Alternative {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private String name;
-    private String description;
-    @ManyToOne
+    private String value;
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "question_id")
     private Question question;
     private Boolean is_answer;
-    private Boolean status;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp

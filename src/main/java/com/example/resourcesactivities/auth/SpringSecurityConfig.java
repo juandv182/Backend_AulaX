@@ -43,6 +43,10 @@ public class SpringSecurityConfig {
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests()
                 .antMatchers(HttpMethod.GET, "/**").permitAll()
+                .antMatchers(HttpMethod.POST, "/**").permitAll()
+
+                .antMatchers(HttpMethod.PUT, "/**").permitAll()
+                .antMatchers(HttpMethod.DELETE, "/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/users/{id}").hasAnyRole("USER", "PADREFAM")
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
                 .antMatchers("/users/**").hasRole("PADREFAM")

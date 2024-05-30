@@ -33,4 +33,7 @@ public class ResourceFile {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "typeFile_id")
+    private TypeFile typeFile;
 }

@@ -21,6 +21,7 @@ public class ResourceFileDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private MyResourceDTO resource;
+    private TypeFileDTO typeFile;
 
     public ResourceFileDTO(UUID id, String name, String url, Boolean status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id=id;

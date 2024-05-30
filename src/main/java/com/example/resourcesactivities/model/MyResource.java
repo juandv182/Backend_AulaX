@@ -35,6 +35,8 @@ public class MyResource {
     private LocalDateTime updatedAt;
     @OneToMany(mappedBy = "myResource",fetch=FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ResourceFile> files =new HashSet<>();
+    @OneToMany(mappedBy = "myResource",fetch=FetchType.EAGER,cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Quizz> quizzes =new HashSet<>();
 
 
 }

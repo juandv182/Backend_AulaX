@@ -10,6 +10,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class MyResourceDTO {
     private Integer id;
@@ -20,5 +22,6 @@ public class MyResourceDTO {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Set<ResourceFileDTO> files;
+    private Set<QuizzDTO> quizzes;
 
 }

@@ -8,6 +8,8 @@ import software.amazon.ion.Decimal;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @AllArgsConstructor
@@ -21,14 +23,15 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String description;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "quizz_id")
     private Quizz quizz;
     private Decimal points;
-    private Boolean status;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @OneToMany(mappedBy = "question",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<Alternative> alternatives =new HashSet<>();
 }

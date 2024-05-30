@@ -2,9 +2,11 @@ package com.example.resourcesactivities.controller;
 
 
 
+import com.example.resourcesactivities.dto.QuizzDTO;
 import com.example.resourcesactivities.model.Course;
 import com.example.resourcesactivities.model.Quizz;
 import com.example.resourcesactivities.repository.QuizzRepository;
+import com.example.resourcesactivities.service.QuizzService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +21,12 @@ import java.util.Optional;
 public class QuizzController {
     @Autowired
     private QuizzRepository quizzRepository;
-
+    @Autowired
+    private QuizzService service;
     @GetMapping
-    public List<Quizz> getAllQuizzes() {
-        return quizzRepository.findAll();
+    public ResponseEntity<List<QuizzDTO>> getAllQuizzes() {
+        List<QuizzDTO> quizzDTOList= service.getAll();
+        return new ResponseEntity<>(quizzDTOList, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
