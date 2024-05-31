@@ -31,6 +31,8 @@ public class Alternative {
     @PreUpdate
     @PrePersist
     public void updateQuizzNota() {
-        this.question.getQuizz().updateNota();
+
+            this.question.getQuizz().updateNota();
+
     }
 }

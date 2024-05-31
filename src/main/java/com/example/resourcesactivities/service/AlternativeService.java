@@ -2,15 +2,19 @@ package com.example.resourcesactivities.service;
 
 import com.example.resourcesactivities.dto.AlternativeDTO;
 import com.example.resourcesactivities.dto.QuestionDTO;
+import com.example.resourcesactivities.dto.QuizzDTO;
 import com.example.resourcesactivities.model.Alternative;
 import com.example.resourcesactivities.model.Question;
+import com.example.resourcesactivities.model.Quizz;
 import com.example.resourcesactivities.repository.AlternativeRepository;
+import com.example.resourcesactivities.repository.QuestionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,6 +25,8 @@ public class AlternativeService {
     private QuizzService quizzService;
     @Autowired
     private QuestionService questionService;
+    @Autowired
+    private QuestionRepository questionRepository;
 
 
     @Transactional
@@ -87,13 +93,23 @@ public class AlternativeService {
         al.setIs_marked(alternativeDTO.getIs_marked());
         al.setCreatedAt(alternativeDTO.getCreatedAt());
         al.setUpdatedAt(alternativeDTO.getUpdatedAt());
+
+        QuestionDTO qObtenido = questionService.getById(alternativeDTO.getQuestion().getId());
         Question q=new Question();
-        q.setId(alternativeDTO.getQuestion().getId());
-        QuestionDTO qObtenido = questionService.getById(q.getId());
+        q.setId(qObtenido.getId());
+        q.setName(qObtenido.getName());
+        q.setPoints(qObtenido.getPoints());
+        q.setCorrectAnswer(qObtenido.getCorrectAnswer());
+        QuizzDTO qdto=qObtenido.getQuizz();
+        Quizz quizz=new Quizz();
+        quizz.setNota(qdto.getNota());
+        quizz.setId(qdto.getId());
+        q.setQuizz(quizz);
         al.setQuestion(q);
         al.setId(alternativeDTO.getId());
         alternativeRepository.save(al);
         alternativeDTO.setId(al.getId());
+
         quizzService.updateNota(qObtenido.getId());
         return alternativeDTO;
     }
