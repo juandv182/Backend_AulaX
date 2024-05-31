@@ -17,6 +17,11 @@ import java.util.stream.Collectors;
 public class AlternativeService {
     @Autowired
     private AlternativeRepository alternativeRepository;
+    @Autowired
+    private QuizzService quizzService;
+    @Autowired
+    private QuestionService questionService;
+
 
     @Transactional
     public List<AlternativeDTO> getAll() {
@@ -84,10 +89,12 @@ public class AlternativeService {
         al.setUpdatedAt(alternativeDTO.getUpdatedAt());
         Question q=new Question();
         q.setId(alternativeDTO.getQuestion().getId());
+        QuestionDTO qObtenido = questionService.getById(q.getId());
         al.setQuestion(q);
         al.setId(alternativeDTO.getId());
         alternativeRepository.save(al);
         alternativeDTO.setId(al.getId());
+        quizzService.updateNota(qObtenido.getId());
         return alternativeDTO;
     }
     @Transactional
@@ -102,13 +109,16 @@ public class AlternativeService {
         al.setUpdatedAt(alternativeDTO.getUpdatedAt());
         Question q=new Question();
         q.setId(alternativeDTO.getQuestion().getId());
+        QuestionDTO qObtenido = questionService.getById(q.getId());
         al.setQuestion(q);
         alternativeRepository.save(al);
+        quizzService.updateNota(qObtenido.getId());
     }
     @Transactional
     public void delete(Integer id) {
-        alternativeRepository.findById(id)
+        Alternative alternative =  alternativeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Alternativa no encontrado con ID: " + id));
         alternativeRepository.deleteById(id);
+        quizzService.updateNota(alternative.getQuestion().getQuizz().getId());
     }
 }

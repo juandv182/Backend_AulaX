@@ -104,7 +104,7 @@ public class QuizzService {
     }
     @Transactional
     public QuizzDTO save(QuizzDTO quizzDTO){
-        var nota=0.00;
+
         Quizz quizz = new Quizz();
         quizz.setName(quizzDTO.getName());
 
@@ -127,11 +127,7 @@ public class QuizzService {
         quizz.setMyResource(r);
         quizz.setTypeQuizz(tq);
         quizz.setCreatedAt(quizzDTO.getCreatedAt());
-
-        for(QuestionDTO q : quizzDTO.getQuestions()){
-            nota+= q.getPoints();
-        }
-        quizz.setNota(nota);
+        quizz.setNota(quizzDTO.getNota());
         quizzRepository.save(quizz);
         quizzDTO.setId(quizz.getId());
         return quizzDTO;
@@ -171,5 +167,11 @@ public class QuizzService {
         .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + id));
         quizzRepository.deleteById(id);
     }
-
+    @Transactional
+    public void updateNota(Integer quizzId) {
+        Quizz quizz = quizzRepository.findById(quizzId)
+                .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+        quizz.updateNota();
+        quizzRepository.save(quizz);
+    }
 }

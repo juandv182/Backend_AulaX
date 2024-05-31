@@ -33,5 +33,11 @@ public class Quizz {
     private TypeQuizz typeQuizz;
     @OneToMany(mappedBy = "quizz",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Question> questions =new HashSet<>();
-
+    public void updateNota() {
+        this.nota = this.questions.stream()
+                .filter(question -> question.getAlternatives().stream()
+                        .allMatch(alternative -> alternative.getIs_answer() && alternative.getIs_marked()))
+                .mapToDouble(Question::getPoints)
+                .sum();
+    }
 }

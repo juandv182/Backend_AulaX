@@ -28,4 +28,9 @@ public class Alternative {
     private LocalDateTime createdAt;
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+    @PreUpdate
+    @PrePersist
+    public void updateQuizzNota() {
+        this.question.getQuizz().updateNota();
+    }
 }
