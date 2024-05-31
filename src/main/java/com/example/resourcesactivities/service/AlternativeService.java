@@ -106,11 +106,10 @@ public class AlternativeService {
         quizz.setId(qdto.getId());
         q.setQuizz(quizz);
         al.setQuestion(q);
-        al.setId(alternativeDTO.getId());
         alternativeRepository.save(al);
         alternativeDTO.setId(al.getId());
 
-        quizzService.updateNota(qObtenido.getId());
+        quizzService.updateNota(qdto.getId());
         return alternativeDTO;
     }
     @Transactional
@@ -118,17 +117,27 @@ public class AlternativeService {
         alternativeRepository.findById(alternativeDTO.getId()).
                 orElseThrow(() -> new RuntimeException("No se encontro la alternativa a actualizar"));
         Alternative al = new Alternative();
+        al.setId(alternativeDTO.getId());
         al.setValue(alternativeDTO.getValue());
         al.setIs_answer(alternativeDTO.getIs_answer());
         al.setIs_marked(alternativeDTO.getIs_marked());
         al.setCreatedAt(alternativeDTO.getCreatedAt());
         al.setUpdatedAt(alternativeDTO.getUpdatedAt());
+        QuestionDTO qObtenido = questionService.getById(alternativeDTO.getQuestion().getId());
         Question q=new Question();
-        q.setId(alternativeDTO.getQuestion().getId());
-        QuestionDTO qObtenido = questionService.getById(q.getId());
+        q.setId(qObtenido.getId());
+        q.setName(qObtenido.getName());
+        q.setPoints(qObtenido.getPoints());
+        q.setCorrectAnswer(qObtenido.getCorrectAnswer());
+        QuizzDTO qdto=qObtenido.getQuizz();
+        Quizz quizz=new Quizz();
+        quizz.setNota(qdto.getNota());
+        quizz.setId(qdto.getId());
+        q.setQuizz(quizz);
         al.setQuestion(q);
         alternativeRepository.save(al);
-        quizzService.updateNota(qObtenido.getId());
+
+        quizzService.updateNota(qdto.getId());
     }
     @Transactional
     public void delete(Integer id) {
