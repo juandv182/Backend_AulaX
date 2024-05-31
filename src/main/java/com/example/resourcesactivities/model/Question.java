@@ -26,8 +26,8 @@ public class Question {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "quizz_id")
     private Quizz quizz;
-    private Decimal points;
-
+    private Double points;
+    private String correctAnswer;
     @CreationTimestamp
     private LocalDateTime createdAt;
     @UpdateTimestamp

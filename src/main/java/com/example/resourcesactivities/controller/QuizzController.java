@@ -35,6 +35,11 @@ public class QuizzController {
         QuizzDTO quizz = service.getById(quizzId);
         return quizz != null ? ResponseEntity.ok().body(quizz) : ResponseEntity.notFound().build();
     }
+    @GetMapping("/{id}/MyResourceId")
+    public ResponseEntity<List<QuizzDTO>> getQuizzByMyResourceId(@PathVariable(value = "id") Integer myresourceId) {
+        List<QuizzDTO> quizzDTOList=service.findByMyResourceId(myresourceId);
+        return new ResponseEntity<>(quizzDTOList, HttpStatus.OK);
+    }
 
     @PostMapping
     public ResponseEntity<QuizzDTO> createQuizz(@RequestBody QuizzDTO quizzdto) {
@@ -48,8 +53,8 @@ public class QuizzController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteQuizz(@PathVariable(value = "id") Integer quizzId) {
-        service.delete(quizzId);
+    public ResponseEntity<Void> deleteQuizz(@PathVariable Integer id) {
+        service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

@@ -19,9 +19,10 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AlternativeDTO {
     private Integer id;
-    private String value;
+    private Double value;
     private QuestionDTO question;
     private Boolean is_answer;
+    private Boolean is_marked;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

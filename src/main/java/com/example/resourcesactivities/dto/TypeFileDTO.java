@@ -15,5 +15,5 @@ import java.util.Set;
 public class TypeFileDTO {
     private Integer id;
     private String name;
-    private Set<ResourceFile> files;
+    private Set<ResourceFileDTO> files;
 }

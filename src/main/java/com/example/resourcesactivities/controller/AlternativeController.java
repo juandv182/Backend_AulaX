@@ -1,8 +1,10 @@
 package com.example.resourcesactivities.controller;
 
 
+import com.example.resourcesactivities.dto.AlternativeDTO;
 import com.example.resourcesactivities.model.Alternative;
 import com.example.resourcesactivities.repository.AlternativeRepository;
+import com.example.resourcesactivities.service.AlternativeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,32 +18,34 @@ import java.util.Optional;
 @CrossOrigin(originPatterns = "*")
 public class AlternativeController {
     @Autowired
-    private AlternativeRepository alternativeRepository;
+    private AlternativeService alternativeService;
     @GetMapping
-    public List<Alternative> getAllAlternatives() {
-        return alternativeRepository.findAll();
+    public ResponseEntity<List<AlternativeDTO>> getAllAlternatives() {
+
+        List<AlternativeDTO> dtoList= alternativeService.getAll();
+        return new ResponseEntity<>(dtoList, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Alternative> getAlternativeById(@PathVariable(value = "id") Integer alternatieId) {
-        Optional<Alternative> alternative = alternativeRepository.findById(alternatieId);
-        return alternative.map(value -> ResponseEntity.ok().body(value))
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<AlternativeDTO> getAlternativeById(@PathVariable(value = "id") Integer alternativeId) {
+        AlternativeDTO alternative = alternativeService.getById(alternativeId);
+        return alternative != null ? ResponseEntity.ok().body(alternative) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public ResponseEntity<Alternative> createAlternative(@RequestBody Alternative alternative) {
-        Alternative savedAlternative = alternativeRepository.save(alternative);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedAlternative);
+    public ResponseEntity<AlternativeDTO> createAlternative(@RequestBody AlternativeDTO alternative) {
+        AlternativeDTO adto = alternativeService.save(alternative);
+        return ResponseEntity.status(HttpStatus.CREATED).body(adto);
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> updateAlternative(@RequestBody AlternativeDTO adto, @PathVariable Integer id) {
+        adto.setId(id);
+        alternativeService.update(adto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteAlternative(@PathVariable(value = "id") Integer alternatieId) {
-        Optional<Alternative> alternative = alternativeRepository.findById(alternatieId);
-        if (alternative.isPresent()) {
-            alternativeRepository.delete(alternative.get());
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<Void> deleteAlternative(@PathVariable Integer id) {
+        alternativeService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

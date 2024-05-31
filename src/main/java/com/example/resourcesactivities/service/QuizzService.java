@@ -1,9 +1,6 @@
 package com.example.resourcesactivities.service;
 
-import com.example.resourcesactivities.dto.MyResourceDTO;
-import com.example.resourcesactivities.dto.QuizzDTO;
-import com.example.resourcesactivities.dto.TopicDTO;
-import com.example.resourcesactivities.dto.TypeQuizzDTO;
+import com.example.resourcesactivities.dto.*;
 import com.example.resourcesactivities.model.MyResource;
 import com.example.resourcesactivities.model.Quizz;
 import com.example.resourcesactivities.model.Topic;
@@ -78,10 +75,39 @@ public class QuizzService {
 
     }
     @Transactional
+    public List<QuizzDTO> findByMyResourceId(Integer id){
+    return quizzRepository.findByMyResourceId(id).stream().map(
+            quizz->{
+                return QuizzDTO.builder()
+                        .id(quizz.getId())
+                        .name(quizz.getName())
+                        .nota((quizz.getNota()))
+                        .createdAt(quizz.getCreatedAt())
+                        .typeQuizz(TypeQuizzDTO.builder()
+                                .id(quizz.getTypeQuizz().getId())
+                                .name(quizz.getTypeQuizz().getName())
+                                .build())
+                        .myResource(MyResourceDTO.builder()
+                                .id(quizz.getMyResource().getId())
+                                .name(quizz.getMyResource().getName())
+                                .description(quizz.getMyResource().getDescription())
+                                .topic(TopicDTO.builder()
+                                        .id(quizz.getMyResource().getTopic().getId())
+                                        .build())
+                                .status(quizz.getMyResource().getStatus())
+                                .createdAt(quizz.getMyResource().getCreatedAt())
+                                .updatedAt(quizz.getMyResource().getUpdatedAt())
+                                .build())
+                        .build();
+            }).collect(Collectors.toList());
+
+    }
+    @Transactional
     public QuizzDTO save(QuizzDTO quizzDTO){
+        var nota=0.00;
         Quizz quizz = new Quizz();
         quizz.setName(quizzDTO.getName());
-        quizz.setNota(quizzDTO.getNota());
+
         MyResourceDTO rdto = quizzDTO.getMyResource();
         MyResource r = new MyResource();
         r.setId(rdto.getId());
@@ -101,6 +127,11 @@ public class QuizzService {
         quizz.setMyResource(r);
         quizz.setTypeQuizz(tq);
         quizz.setCreatedAt(quizzDTO.getCreatedAt());
+
+        for(QuestionDTO q : quizzDTO.getQuestions()){
+            nota+= q.getPoints();
+        }
+        quizz.setNota(nota);
         quizzRepository.save(quizz);
         quizzDTO.setId(quizz.getId());
         return quizzDTO;
@@ -110,6 +141,7 @@ public class QuizzService {
         quizzRepository.findById(quizzDTO.getId()).
                 orElseThrow(() -> new RuntimeException("No se encontro el cuestionario a actualizar"));
         Quizz quizz = new Quizz();
+        quizz.setId(quizzDTO.getId());
         quizz.setName(quizzDTO.getName());
         quizz.setNota(quizzDTO.getNota());
         MyResourceDTO rdto = quizzDTO.getMyResource();

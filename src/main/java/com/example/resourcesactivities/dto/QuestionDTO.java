@@ -24,7 +24,8 @@ public class QuestionDTO {
     private Integer id;
     private String name;
     private QuizzDTO quizz;
-    private Decimal points;
+    private Double points;
+    private String correctAnswer;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private List<AlternativeDTO> alternatives;

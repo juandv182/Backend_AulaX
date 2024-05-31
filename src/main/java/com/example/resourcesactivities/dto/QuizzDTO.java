@@ -24,5 +24,5 @@ public class QuizzDTO {
     private LocalDateTime createdAt;
     private MyResourceDTO myResource;
     private TypeQuizzDTO typeQuizz;
-    private List<Question> questions;
+    private List<QuestionDTO> questions;
 }
