@@ -25,7 +25,7 @@ public class Quizz {
     private Double nota;
     @CreationTimestamp
     private LocalDateTime createdAt;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "resource_id")
     private MyResource myResource;
     @ManyToOne(fetch = FetchType.EAGER)

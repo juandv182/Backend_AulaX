@@ -1,10 +1,7 @@
 package com.example.resourcesactivities.service;
 
 import com.example.resourcesactivities.dto.*;
-import com.example.resourcesactivities.model.MyResource;
-import com.example.resourcesactivities.model.Quizz;
-import com.example.resourcesactivities.model.Topic;
-import com.example.resourcesactivities.model.TypeQuizz;
+import com.example.resourcesactivities.model.*;
 import com.example.resourcesactivities.repository.MyResourceRepository;
 import com.example.resourcesactivities.repository.QuizzRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -168,4 +165,8 @@ public class QuizzService {
         quizz.updateNota();
         quizzRepository.save(quizz);
     }
+
+   
+
+
 }
