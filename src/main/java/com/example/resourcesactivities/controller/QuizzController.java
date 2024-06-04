@@ -53,7 +53,7 @@ public class QuizzController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteQuizz(@PathVariable Integer id) {
+    public ResponseEntity<Void> deleteQuizz(@PathVariable(value = "id") Integer id) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -82,6 +82,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
+    public UserDTO findByUsername(String username) {
+        Optional<User> u=repository.findByUsername(username);
+        UserDTO userDto = DtoMapperUser.builder().setUser(u.orElseThrow()).build();
+        return  userDto;
+    }
+
+    @Override
+    @Transactional
     public void remove(Long id) {
         repository.deleteById(id);
     }

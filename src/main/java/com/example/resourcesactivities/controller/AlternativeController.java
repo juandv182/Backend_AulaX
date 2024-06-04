@@ -31,7 +31,11 @@ public class AlternativeController {
         AlternativeDTO alternative = alternativeService.getById(alternativeId);
         return alternative != null ? ResponseEntity.ok().body(alternative) : ResponseEntity.notFound().build();
     }
-
+    @GetMapping("/{id}/QuestionId")
+    public ResponseEntity<List<AlternativeDTO>> getQuizzByMyResourceId(@PathVariable(value = "id") Integer questionId) {
+        List<AlternativeDTO> DTOlist=alternativeService.findByQuestionId(questionId);
+        return new ResponseEntity<>(DTOlist, HttpStatus.OK);
+    }
     @PostMapping
     public ResponseEntity<AlternativeDTO> createAlternative(@RequestBody AlternativeDTO alternative) {
         AlternativeDTO adto = alternativeService.save(alternative);

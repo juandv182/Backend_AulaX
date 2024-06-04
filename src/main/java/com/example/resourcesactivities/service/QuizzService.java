@@ -5,6 +5,7 @@ import com.example.resourcesactivities.model.MyResource;
 import com.example.resourcesactivities.model.Quizz;
 import com.example.resourcesactivities.model.Topic;
 import com.example.resourcesactivities.model.TypeQuizz;
+import com.example.resourcesactivities.repository.MyResourceRepository;
 import com.example.resourcesactivities.repository.QuizzRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionException;
@@ -12,12 +13,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 public class QuizzService {
     @Autowired
     private QuizzRepository quizzRepository;
+    @Autowired
+    private MyResourceRepository myResourceRepository;
     @Transactional
     public List<QuizzDTO> getAll(){
         List<Quizz> quizzList = quizzRepository.findAll();
@@ -108,18 +112,8 @@ public class QuizzService {
         Quizz quizz = new Quizz();
         quizz.setName(quizzDTO.getName());
 
-        MyResourceDTO rdto = quizzDTO.getMyResource();
         MyResource r = new MyResource();
-        r.setId(rdto.getId());
-        r.setDescription(rdto.getDescription());
-        r.setName(rdto.getName());
-        r.setStatus(rdto.getStatus());
-        r.setCreatedAt(rdto.getCreatedAt());
-        r.setUpdatedAt(rdto.getUpdatedAt());
-        TopicDTO tdto=rdto.getTopic();
-        Topic t=new Topic();
-        t.setId(tdto.getId());
-        r.setTopic(t);
+        r.setId(quizzDTO.getMyResource().getId());
         TypeQuizzDTO tqdto=quizzDTO.getTypeQuizz();
         TypeQuizz tq= new TypeQuizz();
         tq.setId(tqdto.getId());

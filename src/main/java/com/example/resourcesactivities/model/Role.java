@@ -1,6 +1,7 @@
 package com.example.resourcesactivities.model;
 
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 
@@ -11,11 +12,12 @@ import javax.persistence.*;
 @Setter
 @ToString
 @Table(name = "roles")
-public class Role {
+public class Role  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(unique = true)
     private String name;
+
 }

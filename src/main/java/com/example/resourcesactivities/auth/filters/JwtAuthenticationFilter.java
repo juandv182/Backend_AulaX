@@ -1,17 +1,22 @@
 package com.example.resourcesactivities.auth.filters;
 
 import com.example.resourcesactivities.model.User;
+import com.example.resourcesactivities.repository.UserRepository;
+import com.example.resourcesactivities.service.UserService;
 import com.fasterxml.jackson.core.exc.StreamReadException;
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -25,11 +30,14 @@ import java.util.Map;
 import static com.example.resourcesactivities.auth.TokenJwtConfig.*;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
+
     private AuthenticationManager authenticationManager;
 
     public JwtAuthenticationFilter(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
+
     }
+
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
@@ -43,6 +51,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             user = new ObjectMapper().readValue(request.getInputStream(), User.class);
             username = user.getUsername();
             password = user.getPassword();
+
 
             // logger.info("Username desde request InputStream (raw) " + username);
             // logger.info("Password desde request InputStream (raw) " + password);
@@ -62,16 +71,21 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain,
                                             Authentication authResult) throws IOException, ServletException {
 
+
         String username = ((org.springframework.security.core.userdetails.User) authResult.getPrincipal())
                 .getUsername();
         Collection<? extends GrantedAuthority> roles = authResult.getAuthorities();
         boolean isDocente = roles.stream().anyMatch(r -> r.getAuthority().equals("ROLE_DOCENTE"));
         boolean isPadreFam = roles.stream().anyMatch(r -> r.getAuthority().equals("ROLE_PADREFAM"));
+
+
+
         Claims claims = Jwts.claims();
         claims.put("authorities", new ObjectMapper().writeValueAsString(roles));
         claims.put("isDocente", isDocente);
         claims.put("isPadrefam", isPadreFam);
         claims.put("username", username);
+
 
         String token = Jwts.builder()
                 .setClaims(claims)

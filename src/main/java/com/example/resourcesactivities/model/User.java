@@ -1,14 +1,16 @@
 package com.example.resourcesactivities.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.time.LocalDate;
 
+import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -17,7 +19,7 @@ import java.util.List;
 @Getter
 @Setter
 @Table(name="users")
-public class User implements IUser{
+public class User implements IUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -52,5 +54,6 @@ public class User implements IUser{
     private boolean padrefam;
 
     private Long id_hijo;
+
 
 }
