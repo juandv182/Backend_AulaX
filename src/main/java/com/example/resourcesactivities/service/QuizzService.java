@@ -5,6 +5,7 @@ import com.example.resourcesactivities.model.*;
 import com.example.resourcesactivities.repository.MyResourceRepository;
 import com.example.resourcesactivities.repository.QuestionRepository;
 import com.example.resourcesactivities.repository.QuizzRepository;
+import com.example.resourcesactivities.repository.TopicRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ public class QuizzService {
     private MyResourceRepository myResourceRepository;
     @Autowired
     private QuestionRepository questionRepository;
+    @Autowired
+    private TopicRepository topicRepository;
     @Transactional
     public List<QuizzDTO> getAll(){
         List<Quizz> quizzList = quizzRepository.findAll();
@@ -159,12 +162,12 @@ public class QuizzService {
         quizz.updateNota();
         quizzRepository.save(quizz);
     }
-
+    @Transactional
     public Map<String, Map<String, List<QuestionDTO>>> getQuestionsGroupedByCompetencyAndLearningUnit(Integer quizzId) {
         Quizz quizz = quizzRepository.findById(quizzId)
                 .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
 
-        if (!"curso".equals(quizz.getTypeQuizz().getName())) {
+        if (!"tema".equals(quizz.getTypeQuizz().getName())) {
             throw new RuntimeException("Este método solo es aplicable para cuestionarios de tipo 'PorCurso'");
         }
 
@@ -184,7 +187,52 @@ public class QuizzService {
 
         return groupedQuestions;
     }
+    @Transactional
+    public Map<String, Map<String, List<QuestionDTO>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(Integer quizzId) {
+        Quizz quizz = quizzRepository.findById(quizzId)
+                .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
 
+        if (!"curso".equals(quizz.getTypeQuizz().getName())) {
+            throw new RuntimeException("Este método solo es aplicable para cuestionarios de tipo 'PorCurso'");
+        }
+
+        Course course = quizz.getMyResource().getTopic().getCourse();
+
+
+        List<Topic> topics = topicRepository.findAllByCourse(course);
+        Map<String, Map<String, List<QuestionDTO>>> groupedQuestions = new HashMap<>();
+
+        for (Topic topic : topics) {
+            for (MyResource resource : topic.getResources()) {
+                for (Quizz relatedQuizz : resource.getQuizzes()) {
+                    for (Question question : relatedQuizz.getQuestions()) {
+                        String competencyName = topic.getCompetence().getName();
+                        String learningUnitName = topic.getLearningUnit().getName();
+
+                        groupedQuestions
+                                .computeIfAbsent(competencyName, k -> new HashMap<>())
+                                .computeIfAbsent(learningUnitName, k -> new ArrayList<>())
+                                .add(convertToDto(question));
+                    }
+                }
+            }
+        }
+
+        return groupedQuestions;
+    }
+    @Transactional
+    public List<QuestionDTO> getQuestionsWithAlternativesForQuizz(Integer quizzId) {
+        Quizz quizz = quizzRepository.findById(quizzId)
+                .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+
+        if (quizz.getTypeQuizz().getId() != 3 && quizz.getTypeQuizz().getId() != 4) {
+            throw new RuntimeException("Este método solo es aplicable para cuestionarios de tipo 'Independiente' o 'PorTema'");
+        }
+
+        List<Question> questions = questionRepository.findByQuizzId(quizzId);
+
+        return questions.stream().map(this::convertToDto).collect(Collectors.toList());
+    }
     private QuestionDTO convertToDto(Question question) {
         return QuestionDTO.builder()
                 .id(question.getId())

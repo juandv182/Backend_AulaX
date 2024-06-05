@@ -51,6 +51,24 @@ public class QuizzController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
+    @GetMapping("/{id}/course-grouped-questions")
+    public ResponseEntity<Map<String, Map<String, List<QuestionDTO>>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(@PathVariable Integer id) {
+        try {
+            Map<String, Map<String, List<QuestionDTO>>> groupedQuestions = service.getQuestionsForCourseGroupedByCompetencyAndLearningUnit(id);
+            return new ResponseEntity<>(groupedQuestions, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/{id}/questions")
+    public ResponseEntity<List<QuestionDTO>> getQuestionsWithAlternativesForQuizz(@PathVariable Integer id) {
+        try {
+            List<QuestionDTO> questions = service.getQuestionsWithAlternativesForQuizz(id);
+            return new ResponseEntity<>(questions, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
     @PostMapping
     public ResponseEntity<QuizzDTO> createQuizz(@RequestBody QuizzDTO quizzdto) {
         QuizzDTO qdto = service.save(quizzdto);

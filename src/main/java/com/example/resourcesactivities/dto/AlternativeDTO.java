@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AlternativeDTO {
     private Integer id;
-    private Double value;
+    private String value;
     private QuestionDTO question;
     private Boolean is_answer;
     private Boolean is_marked;
