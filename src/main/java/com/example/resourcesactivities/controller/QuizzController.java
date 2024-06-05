@@ -2,6 +2,7 @@ package com.example.resourcesactivities.controller;
 
 
 
+import com.example.resourcesactivities.dto.QuestionDTO;
 import com.example.resourcesactivities.dto.QuizzDTO;
 import com.example.resourcesactivities.dto.TopicDTO;
 import com.example.resourcesactivities.model.Course;
@@ -14,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -40,7 +42,15 @@ public class QuizzController {
         List<QuizzDTO> quizzDTOList=service.findByMyResourceId(myresourceId);
         return new ResponseEntity<>(quizzDTOList, HttpStatus.OK);
     }
-
+    @GetMapping("/{id}/grouped-questions")
+    public ResponseEntity<Map<String, Map<String, List<QuestionDTO>>>> getQuestionsGroupedByCompetencyAndLearningUnit(@PathVariable Integer id) {
+        try {
+            Map<String, Map<String, List<QuestionDTO>>> groupedQuestions = service.getQuestionsGroupedByCompetencyAndLearningUnit(id);
+            return new ResponseEntity<>(groupedQuestions, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
     @PostMapping
     public ResponseEntity<QuizzDTO> createQuizz(@RequestBody QuizzDTO quizzdto) {
         QuizzDTO qdto = service.save(quizzdto);
@@ -57,4 +67,5 @@ public class QuizzController {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
+
 }

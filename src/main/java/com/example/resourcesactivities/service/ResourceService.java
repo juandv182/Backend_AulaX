@@ -138,16 +138,6 @@ public class ResourceService {
             }
         }
 
-        Set<ResourceFile> files = myResourceDTO.getFiles().stream().map(fileDTO -> {
-            ResourceFile file = new ResourceFile();
-            file.setName(fileDTO.getName());
-            file.setUrl(fileDTO.getUrl());
-            file.setStatus(fileDTO.getStatus());
-            file.setMyResource(myResource);
-            return file;
-        }).collect(Collectors.toSet());
-        myResource.setFiles(files);
-
         MyResource savedResource = myResourceRepository.save(myResource);
 
         return MyResourceDTO.builder()
@@ -182,6 +172,7 @@ public class ResourceService {
             existingMyResource.setStatus(myResourceDTO.getStatus());
             existingMyResource.setCreatedAt(myResourceDTO.getCreatedAt());
             existingMyResource.setUpdatedAt(myResourceDTO.getUpdatedAt());
+            existingMyResource.setId(resourceId);
             // Verificar que topicId no sea null y que el Topic exista
             TopicDTO topicdto = null;
             if (myResourceDTO.getTopic().getId() != null) {
@@ -193,15 +184,7 @@ public class ResourceService {
                     throw new IllegalArgumentException("Invalid topicId");
                 }
             }
-            Set<ResourceFile> files = myResourceDTO.getFiles().stream().map(fileDTO -> {
-                ResourceFile file = new ResourceFile();
-                file.setName(fileDTO.getName());
-                file.setUrl(fileDTO.getUrl());
-                file.setStatus(fileDTO.getStatus());
-                file.setMyResource(existingMyResource);
-                return file;
-            }).collect(Collectors.toSet());
-            existingMyResource.setFiles(files);
+
             MyResource updatedMyResource = myResourceRepository.save(existingMyResource);
             return MyResourceDTO.builder()
                     .id(updatedMyResource.getId())

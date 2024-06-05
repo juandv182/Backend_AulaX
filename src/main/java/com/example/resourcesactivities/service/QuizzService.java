@@ -3,14 +3,14 @@ package com.example.resourcesactivities.service;
 import com.example.resourcesactivities.dto.*;
 import com.example.resourcesactivities.model.*;
 import com.example.resourcesactivities.repository.MyResourceRepository;
+import com.example.resourcesactivities.repository.QuestionRepository;
 import com.example.resourcesactivities.repository.QuizzRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +19,8 @@ public class QuizzService {
     private QuizzRepository quizzRepository;
     @Autowired
     private MyResourceRepository myResourceRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
     @Transactional
     public List<QuizzDTO> getAll(){
         List<Quizz> quizzList = quizzRepository.findAll();
@@ -114,7 +116,9 @@ public class QuizzService {
         TypeQuizzDTO tqdto=quizzDTO.getTypeQuizz();
         TypeQuizz tq= new TypeQuizz();
         tq.setId(tqdto.getId());
-        tq.setName(tqdto.getName());
+        if(tqdto.getId()==3){
+
+        }
         quizz.setMyResource(r);
         quizz.setTypeQuizz(tq);
         quizz.setCreatedAt(quizzDTO.getCreatedAt());
@@ -134,19 +138,9 @@ public class QuizzService {
         MyResourceDTO rdto = quizzDTO.getMyResource();
         MyResource r = new MyResource();
         r.setId(rdto.getId());
-        r.setDescription(rdto.getDescription());
-        r.setName(rdto.getName());
-        r.setStatus(rdto.getStatus());
-        r.setCreatedAt(rdto.getCreatedAt());
-        r.setUpdatedAt(rdto.getUpdatedAt());
-        TopicDTO tdto=rdto.getTopic();
-        Topic t=new Topic();
-        t.setId(tdto.getId());
-        r.setTopic(t);
         TypeQuizzDTO tqdto=quizzDTO.getTypeQuizz();
         TypeQuizz tq= new TypeQuizz();
         tq.setId(tqdto.getId());
-        tq.setName(tqdto.getName());
         quizz.setMyResource(r);
         quizz.setTypeQuizz(tq);
         quizz.setCreatedAt(quizzDTO.getCreatedAt());
@@ -166,7 +160,51 @@ public class QuizzService {
         quizzRepository.save(quizz);
     }
 
-   
+    public Map<String, Map<String, List<QuestionDTO>>> getQuestionsGroupedByCompetencyAndLearningUnit(Integer quizzId) {
+        Quizz quizz = quizzRepository.findById(quizzId)
+                .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+
+        if (!"curso".equals(quizz.getTypeQuizz().getName())) {
+            throw new RuntimeException("Este método solo es aplicable para cuestionarios de tipo 'PorCurso'");
+        }
+
+        List<Question> questions = questionRepository.findByQuizzId(quizzId);
+
+        Map<String, Map<String, List<QuestionDTO>>> groupedQuestions = new HashMap<>();
+
+        for (Question question : questions) {
+            String competencyName = question.getQuizz().getMyResource().getTopic().getCompetence().getName();
+            String learningUnitName = question.getQuizz().getMyResource().getTopic().getLearningUnit().getName();
+
+            groupedQuestions
+                    .computeIfAbsent(competencyName, k -> new HashMap<>())
+                    .computeIfAbsent(learningUnitName, k -> new ArrayList<>())
+                    .add(convertToDto(question));
+        }
+
+        return groupedQuestions;
+    }
+
+    private QuestionDTO convertToDto(Question question) {
+        return QuestionDTO.builder()
+                .id(question.getId())
+                .name(question.getName())
+                .points(question.getPoints())
+                .correctAnswer(question.getCorrectAnswer())
+                .createdAt(question.getCreatedAt())
+                .updatedAt(question.getUpdatedAt())
+                .alternatives(question.getAlternatives().stream().map(this::convertToDto).collect(Collectors.toList()))
+                .build();
+    }
+
+    private AlternativeDTO convertToDto(Alternative alternative) {
+        return AlternativeDTO.builder()
+                .id(alternative.getId())
+                .value(alternative.getValue())
+                .is_answer(alternative.getIs_answer())
+                .is_marked(alternative.getIs_marked())
+                .build();
+    }
 
 
 }
