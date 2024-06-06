@@ -2,6 +2,7 @@ package com.example.resourcesactivities.controller;
 
 
 
+import com.example.resourcesactivities.dto.AlternativeDTO;
 import com.example.resourcesactivities.dto.QuestionDTO;
 import com.example.resourcesactivities.dto.QuizzDTO;
 import com.example.resourcesactivities.dto.TopicDTO;
@@ -61,6 +62,16 @@ public class QuizzController {
         try {
             Map<String, Map<String, Map<String, List<QuestionDTO>>>>  groupedQuestions = service.getQuestionsForCourseGroupedByCompetencyAndLearningUnit(id);
             return new ResponseEntity<>(groupedQuestions, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/{id}/marked-alternatives")
+    public ResponseEntity<List<AlternativeDTO>> getMarkedAlternativesForQuizz(@PathVariable Integer id) {
+        try {
+            List<AlternativeDTO> markedAlternatives = service.getMarkedAlternativesForQuizz(id);
+            return new ResponseEntity<>(markedAlternatives, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }

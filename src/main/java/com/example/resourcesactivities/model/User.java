@@ -32,7 +32,10 @@ public class User implements IUser {
     @NotBlank
     private String password;
 
+    private String nombres;
 
+    private String apellidos;
+    private boolean genero;
     @NotEmpty
     @Email
     @Column(unique = true)

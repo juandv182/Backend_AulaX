@@ -34,7 +34,10 @@ public class DtoMapperUser {
                 this.user.getFechaNacimiento(),
                 isDocente,
                 isPadrefam,
-                this.user.getId_hijo()
+                this.user.getId_hijo(),
+                this.user.getNombres(),
+                this.user.getApellidos(),
+                this.user.isGenero()
 
         );
 

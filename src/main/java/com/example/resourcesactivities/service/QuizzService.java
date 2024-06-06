@@ -267,6 +267,26 @@ public class QuizzService {
 
         return questions.stream().map(this::convertToDto).collect(Collectors.toList());
     }
+    @Transactional
+    public List<AlternativeDTO> getMarkedAlternativesForQuizz(Integer quizzId) {
+        Quizz quizz = quizzRepository.findById(quizzId)
+                .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+
+        List<Question> questions = questionRepository.findByQuizzId(quizzId);
+        List<Alternative> markedAlternatives = new ArrayList<>();
+
+        for (Question question : questions) {
+            markedAlternatives.addAll(question.getAlternatives().stream()
+                    .filter(Alternative::getIs_marked)
+                    .collect(Collectors.toList()));
+        }
+        // Ordenar las alternativas por el campo 'id' en orden ascendente
+        markedAlternatives.sort(Comparator.comparingInt(Alternative::getId));
+        return markedAlternatives.stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     private QuestionDTO convertToDto(Question question) {
         return QuestionDTO.builder()
                 .id(question.getId())

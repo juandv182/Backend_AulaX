@@ -6,6 +6,10 @@ import java.util.List;
 public class UserDTO {
     private Long id;
     private String username;
+    private String nombres;
+
+    private String apellidos;
+    private boolean genero;
     private String email;
     private LocalDate fechaNacimiento;
     private boolean docente;
@@ -13,7 +17,8 @@ public class UserDTO {
     private Long id_hijo;
 
     public UserDTO(Long id, String username, String email,LocalDate fechaNacimiento,
-                   boolean docente, boolean padrefam, Long id_hijo) {
+                   boolean docente, boolean padrefam, Long id_hijo,String nombres,String apellidos,
+                   boolean genero) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -21,6 +26,9 @@ public class UserDTO {
         this.docente = docente;
         this.padrefam = padrefam;
         this.id_hijo = id_hijo;
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.genero = genero;
 
     }
 
@@ -77,6 +85,30 @@ public class UserDTO {
 
     public Long getId_hijo() {
         return id_hijo;
+    }
+
+    public String getNombres() {
+        return nombres;
+    }
+
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
+
+    public String getApellidos() {
+        return apellidos;
+    }
+
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
+
+    public boolean isGenero() {
+        return genero;
+    }
+
+    public void setGenero(boolean genero) {
+        this.genero = genero;
     }
 
     public void setId_hijo(Long id_hijo) {
