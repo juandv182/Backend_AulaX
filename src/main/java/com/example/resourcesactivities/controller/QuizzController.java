@@ -42,19 +42,24 @@ public class QuizzController {
         List<QuizzDTO> quizzDTOList=service.findByMyResourceId(myresourceId);
         return new ResponseEntity<>(quizzDTOList, HttpStatus.OK);
     }
+    @GetMapping("/{id}/TypeQuizzId")
+    public ResponseEntity<List<QuizzDTO>> getQuizzByTypeQuizzId(@PathVariable(value = "id") Integer id) {
+        List<QuizzDTO> quizzDTOList=service.findByTypeQuizzId(id);
+        return new ResponseEntity<>(quizzDTOList, HttpStatus.OK);
+    }
     @GetMapping("/{id}/grouped-questions")
-    public ResponseEntity<Map<String, Map<String, List<QuestionDTO>>>> getQuestionsGroupedByCompetencyAndLearningUnit(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, Map<String, Map<String, List<QuestionDTO>>>>> getQuestionsGroupedByCompetencyAndLearningUnit(@PathVariable Integer id) {
         try {
-            Map<String, Map<String, List<QuestionDTO>>> groupedQuestions = service.getQuestionsGroupedByCompetencyAndLearningUnit(id);
+            Map<String, Map<String, Map<String, List<QuestionDTO>>>> groupedQuestions = service.getQuestionsGroupedByCompetencyAndLearningUnit(id);
             return new ResponseEntity<>(groupedQuestions, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
     @GetMapping("/{id}/course-grouped-questions")
-    public ResponseEntity<Map<String, Map<String, List<QuestionDTO>>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, Map<String, Map<String, List<QuestionDTO>>>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(@PathVariable Integer id) {
         try {
-            Map<String, Map<String, List<QuestionDTO>>> groupedQuestions = service.getQuestionsForCourseGroupedByCompetencyAndLearningUnit(id);
+            Map<String, Map<String, Map<String, List<QuestionDTO>>>>  groupedQuestions = service.getQuestionsForCourseGroupedByCompetencyAndLearningUnit(id);
             return new ResponseEntity<>(groupedQuestions, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

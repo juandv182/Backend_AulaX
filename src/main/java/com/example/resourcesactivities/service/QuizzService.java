@@ -109,6 +109,34 @@ public class QuizzService {
 
     }
     @Transactional
+    public List<QuizzDTO> findByTypeQuizzId(Integer id){
+        return quizzRepository.findByTypeQuizzId(id).stream().map(
+                quizz->{
+                    return QuizzDTO.builder()
+                            .id(quizz.getId())
+                            .name(quizz.getName())
+                            .nota((quizz.getNota()))
+                            .createdAt(quizz.getCreatedAt())
+                            .typeQuizz(TypeQuizzDTO.builder()
+                                    .id(quizz.getTypeQuizz().getId())
+                                    .name(quizz.getTypeQuizz().getName())
+                                    .build())
+                            .myResource(MyResourceDTO.builder()
+                                    .id(quizz.getMyResource().getId())
+                                    .name(quizz.getMyResource().getName())
+                                    .description(quizz.getMyResource().getDescription())
+                                    .topic(TopicDTO.builder()
+                                            .id(quizz.getMyResource().getTopic().getId())
+                                            .build())
+                                    .status(quizz.getMyResource().getStatus())
+                                    .createdAt(quizz.getMyResource().getCreatedAt())
+                                    .updatedAt(quizz.getMyResource().getUpdatedAt())
+                                    .build())
+                            .build();
+                }).collect(Collectors.toList());
+
+    }
+    @Transactional
     public QuizzDTO save(QuizzDTO quizzDTO){
 
         Quizz quizz = new Quizz();
@@ -163,7 +191,7 @@ public class QuizzService {
         quizzRepository.save(quizz);
     }
     @Transactional
-    public Map<String, Map<String, List<QuestionDTO>>> getQuestionsGroupedByCompetencyAndLearningUnit(Integer quizzId) {
+    public Map<String, Map<String, Map<String, List<QuestionDTO>>>> getQuestionsGroupedByCompetencyAndLearningUnit(Integer quizzId) {
         Quizz quizz = quizzRepository.findById(quizzId)
                 .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
 
@@ -173,22 +201,26 @@ public class QuizzService {
 
         List<Question> questions = questionRepository.findByQuizzId(quizzId);
 
-        Map<String, Map<String, List<QuestionDTO>>> groupedQuestions = new HashMap<>();
+        Map<String, Map<String, Map<String, List<QuestionDTO>>>> groupedQuestions = new HashMap<>();
 
         for (Question question : questions) {
-            String competencyName = question.getQuizz().getMyResource().getTopic().getCompetence().getName();
-            String learningUnitName = question.getQuizz().getMyResource().getTopic().getLearningUnit().getName();
+            Topic topic = question.getQuizz().getMyResource().getTopic();
+            String competencyName = topic.getCompetence().getName();
+            String learningUnitName = topic.getLearningUnit().getName();
+            String topicName = topic.getName();
 
             groupedQuestions
                     .computeIfAbsent(competencyName, k -> new HashMap<>())
-                    .computeIfAbsent(learningUnitName, k -> new ArrayList<>())
+                    .computeIfAbsent(learningUnitName, k -> new HashMap<>())
+                    .computeIfAbsent(topicName, k -> new ArrayList<>())
                     .add(convertToDto(question));
         }
+
 
         return groupedQuestions;
     }
     @Transactional
-    public Map<String, Map<String, List<QuestionDTO>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(Integer quizzId) {
+    public Map<String, Map<String, Map<String, List<QuestionDTO>>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(Integer quizzId) {
         Quizz quizz = quizzRepository.findById(quizzId)
                 .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
 
@@ -200,7 +232,7 @@ public class QuizzService {
 
 
         List<Topic> topics = topicRepository.findAllByCourse(course);
-        Map<String, Map<String, List<QuestionDTO>>> groupedQuestions = new HashMap<>();
+        Map<String, Map<String, Map<String, List<QuestionDTO>>>> groupedQuestions = new HashMap<>();
 
         for (Topic topic : topics) {
             for (MyResource resource : topic.getResources()) {
@@ -208,10 +240,12 @@ public class QuizzService {
                     for (Question question : relatedQuizz.getQuestions()) {
                         String competencyName = topic.getCompetence().getName();
                         String learningUnitName = topic.getLearningUnit().getName();
+                        String topicName = topic.getName();
 
                         groupedQuestions
                                 .computeIfAbsent(competencyName, k -> new HashMap<>())
-                                .computeIfAbsent(learningUnitName, k -> new ArrayList<>())
+                                .computeIfAbsent(learningUnitName, k -> new HashMap<>())
+                                .computeIfAbsent(topicName, k -> new ArrayList<>())
                                 .add(convertToDto(question));
                     }
                 }
@@ -225,7 +259,7 @@ public class QuizzService {
         Quizz quizz = quizzRepository.findById(quizzId)
                 .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
 
-        if (quizz.getTypeQuizz().getId() != 3 && quizz.getTypeQuizz().getId() != 4) {
+        if (quizz.getTypeQuizz().getId() != 1 && quizz.getTypeQuizz().getId() != 4) {
             throw new RuntimeException("Este método solo es aplicable para cuestionarios de tipo 'Independiente' o 'PorTema'");
         }
 

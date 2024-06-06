@@ -121,8 +121,6 @@ public class AlternativeService {
         al.setValue(alternativeDTO.getValue());
         al.setIs_answer(alternativeDTO.getIs_answer());
         al.setIs_marked(alternativeDTO.getIs_marked());
-        al.setCreatedAt(alternativeDTO.getCreatedAt());
-        al.setUpdatedAt(alternativeDTO.getUpdatedAt());
         QuestionDTO qObtenido = questionService.getById(alternativeDTO.getQuestion().getId());
         Question q=new Question();
         q.setId(qObtenido.getId());

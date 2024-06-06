@@ -9,4 +9,6 @@ import java.util.List;
 public interface QuizzRepository extends JpaRepository<Quizz, Integer> {
     List<Quizz> findByMyResourceId(Integer id);
 
+    List<Quizz> findByTypeQuizzId(Integer id);
+
 }
