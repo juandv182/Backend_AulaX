@@ -3,6 +3,7 @@ package com.example.resourcesactivities.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @AllArgsConstructor
@@ -18,5 +19,6 @@ public class HistoryFile {
     @ManyToOne
     @JoinColumn(name = "file_id")
     private ResourceFile file;
+    private LocalDateTime clickedAt;
 
 }

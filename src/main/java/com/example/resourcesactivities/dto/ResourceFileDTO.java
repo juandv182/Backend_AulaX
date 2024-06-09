@@ -14,7 +14,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ResourceFileDTO {
 
-    private UUID id;
+    private Integer id;
     private String name;
     private String url;
     private Boolean status;
@@ -23,7 +23,7 @@ public class ResourceFileDTO {
     private MyResourceDTO resource;
     private TypeFileDTO typeFile;
 
-    public ResourceFileDTO(UUID id, String name, String url, Boolean status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ResourceFileDTO(Integer id, String name, String url, Boolean status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id=id;
         this.name=name;
         this.url=url;

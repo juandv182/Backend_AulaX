@@ -12,7 +12,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@Table(name = "typefiles")
+@Table(name = "type_files")
 public class TypeFile {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

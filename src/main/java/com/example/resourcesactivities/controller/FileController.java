@@ -108,7 +108,7 @@ public class FileController {
     }
     @Transactional
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceFileDTO> getFileById(@PathVariable(value = "id") UUID id) {
+    public ResponseEntity<ResourceFileDTO> getFileById(@PathVariable(value = "id") Integer id) {
         ResourceFile f=fileRepository.findById(id).
                 orElseThrow(() -> new ExpressionException("Archivo no encontrado con ID: " + id));
         Topic t = f.getMyResource().getTopic();
@@ -159,7 +159,7 @@ public class FileController {
             return ResponseEntity.notFound().build();
         }
         filesDto = files.stream().map(path -> {
-            UUID id = path.getId();
+            Integer id = path.getId();
             String name = path.getName();
             Boolean status = path.getStatus();
             LocalDateTime createdAt = path.getCreatedAt();
@@ -179,7 +179,7 @@ public class FileController {
             return ResponseEntity.notFound().build();
         }
         filesDto = files.stream().map(path -> {
-            UUID id = path.getId();
+            Integer id = path.getId();
             String name = path.getName();
             Boolean status = path.getStatus();
             LocalDateTime createdAt = path.getCreatedAt();
