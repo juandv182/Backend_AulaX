@@ -237,17 +237,20 @@ public class QuizzService {
         for (Topic topic : topics) {
             for (MyResource resource : topic.getResources()) {
                 for (Quizz relatedQuizz : resource.getQuizzes()) {
-                    for (Question question : relatedQuizz.getQuestions()) {
-                        String competencyName = topic.getCompetence().getName();
-                        String learningUnitName = topic.getLearningUnit().getName();
-                        String topicName = topic.getName();
+                    if (relatedQuizz.getTypeQuizz().getId() ==3){
+                        for (Question question : relatedQuizz.getQuestions()) {
+                            String competencyName = topic.getCompetence().getName();
+                            String learningUnitName = topic.getLearningUnit().getName();
+                            String topicName = topic.getName();
 
-                        groupedQuestions
-                                .computeIfAbsent(competencyName, k -> new HashMap<>())
-                                .computeIfAbsent(learningUnitName, k -> new HashMap<>())
-                                .computeIfAbsent(topicName, k -> new ArrayList<>())
-                                .add(convertToDto(question));
+                            groupedQuestions
+                                    .computeIfAbsent(competencyName, k -> new HashMap<>())
+                                    .computeIfAbsent(learningUnitName, k -> new HashMap<>())
+                                    .computeIfAbsent(topicName, k -> new ArrayList<>())
+                                    .add(convertToDto(question));
+                        }
                     }
+
                 }
             }
         }

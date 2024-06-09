@@ -118,7 +118,6 @@ public class AlternativeService {
                 orElseThrow(() -> new RuntimeException("No se encontro la alternativa a actualizar"));
         Alternative al = new Alternative();
         al.setId(alternativeDTO.getId());
-        al.setValue(alternativeDTO.getValue());
         al.setIs_answer(alternativeDTO.getIs_answer());
         al.setIs_marked(alternativeDTO.getIs_marked());
         QuestionDTO qObtenido = questionService.getById(alternativeDTO.getQuestion().getId());
