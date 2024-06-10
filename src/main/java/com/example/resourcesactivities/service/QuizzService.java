@@ -187,7 +187,9 @@ public class QuizzService {
     public void updateNota(Integer quizzId) {
         Quizz quizz = quizzRepository.findById(quizzId)
                 .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+        quizz.getQuestions().size();
         quizz.updateNota();
+
         quizzRepository.save(quizz);
     }
     @Transactional

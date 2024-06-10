@@ -9,6 +9,7 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @AllArgsConstructor
@@ -31,13 +32,15 @@ public class Quizz {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "typequizz_id")
     private TypeQuizz typeQuizz;
-    @OneToMany(mappedBy = "quizz",fetch = FetchType.LAZY,cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(mappedBy = "quizz",fetch = FetchType.EAGER,cascade = CascadeType.ALL,orphanRemoval = true)
     private Set<Question> questions =new HashSet<>();
     public void updateNota() {
+        System.out.println("Accediendo a updateNota");
         this.nota = this.questions.stream()
                 .filter(question -> question.getAlternatives().stream()
                         .allMatch(alternative -> alternative.getIs_answer() && alternative.getIs_marked()))
                 .mapToDouble(Question::getPoints)
                 .sum();
+        System.out.println("Nota actualizada: " + this.nota );
     }
 }

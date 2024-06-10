@@ -114,26 +114,21 @@ public class AlternativeService {
     }
     @Transactional
     public void update(AlternativeDTO alternativeDTO){
-        alternativeRepository.findById(alternativeDTO.getId()).
-                orElseThrow(() -> new RuntimeException("No se encontro la alternativa a actualizar"));
-        Alternative al = new Alternative();
-        al.setId(alternativeDTO.getId());
-        al.setIs_answer(alternativeDTO.getIs_answer());
-        al.setIs_marked(alternativeDTO.getIs_marked());
-        QuestionDTO qObtenido = questionService.getById(alternativeDTO.getQuestion().getId());
-        Question q=new Question();
-        q.setId(qObtenido.getId());
-        q.setName(qObtenido.getName());
-        q.setPoints(qObtenido.getPoints());
-        q.setCorrectAnswer(qObtenido.getCorrectAnswer());
-        QuizzDTO qdto=qObtenido.getQuizz();
-        Quizz quizz=new Quizz();
-        quizz.setNota(qdto.getNota());
-        quizz.setId(qdto.getId());
-        q.setQuizz(quizz);
-        al.setQuestion(q);
-        alternativeRepository.save(al);
+        Alternative existingAlternative = alternativeRepository.findById(alternativeDTO.getId())
+                .orElseThrow(() -> new RuntimeException("No se encontró la alternativa a actualizar"));
 
+
+        existingAlternative.setIs_marked(alternativeDTO.getIs_marked());
+
+        QuestionDTO qObtenido = questionService.getById(alternativeDTO.getQuestion().getId());
+
+
+        QuizzDTO qdto = qObtenido.getQuizz();
+
+
+
+        alternativeRepository.save(existingAlternative);
+        System.out.println(qdto.getId());
         quizzService.updateNota(qdto.getId());
     }
     @Transactional

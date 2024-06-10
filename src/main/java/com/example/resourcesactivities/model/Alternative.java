@@ -19,7 +19,7 @@ public class Alternative {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String value;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
     private Boolean is_answer;
