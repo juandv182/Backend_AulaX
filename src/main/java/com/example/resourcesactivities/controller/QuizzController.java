@@ -57,16 +57,24 @@ public class QuizzController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
-    @GetMapping("/{id}/course-grouped-questions")
-    public ResponseEntity<Map<String, Map<String, Map<String, List<QuestionDTO>>>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(@PathVariable Integer id) {
+    @GetMapping("/{quizzId}/course/{courseId}/course-grouped-questions")
+    public ResponseEntity<Map<String, Map<String, Map<String, List<QuestionDTO>>>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(@PathVariable Integer quizzId, @PathVariable Integer courseId) {
         try {
-            Map<String, Map<String, Map<String, List<QuestionDTO>>>>  groupedQuestions = service.getQuestionsForCourseGroupedByCompetencyAndLearningUnit(id);
+            Map<String, Map<String, Map<String, List<QuestionDTO>>>>  groupedQuestions = service.getQuestionsForCourseGroupedByCompetencyAndLearningUnit(quizzId,courseId);
             return new ResponseEntity<>(groupedQuestions, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
-
+    @GetMapping("/{quizzId}/course/{courseId}/total-nota")
+    public ResponseEntity<Double> getTotalNotaForCourse(@PathVariable Integer quizzId, @PathVariable Integer courseId) {
+        try {
+            Double totalNota = service.getTotalNotaForCourse(quizzId, courseId);
+            return new ResponseEntity<>(totalNota, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
     @GetMapping("/{id}/marked-alternatives")
     public ResponseEntity<List<AlternativeDTO>> getMarkedAlternativesForQuizz(@PathVariable Integer id) {
         try {

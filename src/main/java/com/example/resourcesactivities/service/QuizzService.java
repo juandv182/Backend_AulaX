@@ -2,10 +2,7 @@ package com.example.resourcesactivities.service;
 
 import com.example.resourcesactivities.dto.*;
 import com.example.resourcesactivities.model.*;
-import com.example.resourcesactivities.repository.MyResourceRepository;
-import com.example.resourcesactivities.repository.QuestionRepository;
-import com.example.resourcesactivities.repository.QuizzRepository;
-import com.example.resourcesactivities.repository.TopicRepository;
+import com.example.resourcesactivities.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.expression.ExpressionException;
 import org.springframework.stereotype.Service;
@@ -24,6 +21,8 @@ public class QuizzService {
     private QuestionRepository questionRepository;
     @Autowired
     private TopicRepository topicRepository;
+    @Autowired
+    private CourseRepository courseRepository;
     @Transactional
     public List<QuizzDTO> getAll(){
         List<Quizz> quizzList = quizzRepository.findAll();
@@ -222,7 +221,7 @@ public class QuizzService {
         return groupedQuestions;
     }
     @Transactional
-    public Map<String, Map<String, Map<String, List<QuestionDTO>>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(Integer quizzId) {
+    public Map<String, Map<String, Map<String, List<QuestionDTO>>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(Integer quizzId, Integer courseId) {
         Quizz quizz = quizzRepository.findById(quizzId)
                 .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
 
@@ -230,8 +229,8 @@ public class QuizzService {
             throw new RuntimeException("Este método solo es aplicable para cuestionarios de tipo 'PorCurso'");
         }
 
-        Course course = quizz.getMyResource().getTopic().getCourse();
-
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado con ID: " + courseId));
 
         List<Topic> topics = topicRepository.findAllByCourse(course);
         Map<String, Map<String, Map<String, List<QuestionDTO>>>> groupedQuestions = new HashMap<>();
@@ -239,7 +238,7 @@ public class QuizzService {
         for (Topic topic : topics) {
             for (MyResource resource : topic.getResources()) {
                 for (Quizz relatedQuizz : resource.getQuizzes()) {
-                    if (relatedQuizz.getTypeQuizz().getId() ==3){
+                    if (relatedQuizz.getTypeQuizz().getId() == 3) {
                         for (Question question : relatedQuizz.getQuestions()) {
                             String competencyName = topic.getCompetence().getName();
                             String learningUnitName = topic.getLearningUnit().getName();
@@ -252,13 +251,13 @@ public class QuizzService {
                                     .add(convertToDto(question));
                         }
                     }
-
                 }
             }
         }
 
         return groupedQuestions;
     }
+
     @Transactional
     public List<QuestionDTO> getQuestionsWithAlternativesForQuizz(Integer quizzId) {
         Quizz quizz = quizzRepository.findById(quizzId)
@@ -291,6 +290,30 @@ public class QuizzService {
                 .map(this::convertToDto)
                 .collect(Collectors.toList());
     }
+    @Transactional
+    public Double getTotalNotaForCourse(Integer quizzId, Integer courseId) {
+        Quizz quizz = quizzRepository.findById(quizzId)
+                .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+        if (!"curso".equals(quizz.getTypeQuizz().getName())) {
+            throw new RuntimeException("Este método solo es aplicable para cuestionarios de tipo 'PorCurso'");
+        }
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado con ID: " + courseId));
+        Double nota=0.0;
+        List<Topic> topics = topicRepository.findAllByCourse(course);
+        for (Topic topic : topics) {
+            for (MyResource resource : topic.getResources()) {
+                for (Quizz relatedQuizz : resource.getQuizzes()) {
+                    if (relatedQuizz.getTypeQuizz().getId() == 3) {
+                        nota+=relatedQuizz.getNota();
+                    }
+                }
+            }
+        }
+
+        return nota;
+    }
+
 
     private QuestionDTO convertToDto(Question question) {
         return QuestionDTO.builder()
