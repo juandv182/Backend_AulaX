@@ -291,28 +291,67 @@ public class QuizzService {
                 .collect(Collectors.toList());
     }
     @Transactional
-    public Double getTotalNotaForCourse(Integer quizzId, Integer courseId) {
+    public Map<String, Object> getTotalNotaForCourse(Integer quizzId, Integer courseId) {
         Quizz quizz = quizzRepository.findById(quizzId)
                 .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+
         if (!"curso".equals(quizz.getTypeQuizz().getName())) {
             throw new RuntimeException("Este método solo es aplicable para cuestionarios de tipo 'PorCurso'");
         }
+
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new RuntimeException("Curso no encontrado con ID: " + courseId));
-        Double nota=0.0;
+
+        List<Map<String, Object>> quizResults = new ArrayList<>();
         List<Topic> topics = topicRepository.findAllByCourse(course);
+
         for (Topic topic : topics) {
             for (MyResource resource : topic.getResources()) {
                 for (Quizz relatedQuizz : resource.getQuizzes()) {
                     if (relatedQuizz.getTypeQuizz().getId() == 3) {
-                        nota+=relatedQuizz.getNota();
+                        Map<String, Object> quizResult = new HashMap<>();
+                        quizResult.put("quizzId", relatedQuizz.getId());
+                        quizResult.put("nota", relatedQuizz.getNota());
+
+                        List<Map<String, Object>> incorrectQuestions = new ArrayList<>();
+                        for (Question question : relatedQuizz.getQuestions()) {
+                            List<Alternative> incorrectAlternatives = question.getAlternatives().stream()
+                                    .filter(Alternative::getIs_marked)
+                                    .filter(alternative -> !alternative.getIs_answer())
+                                    .collect(Collectors.toList());
+
+                            for (Alternative incorrectAlternative : incorrectAlternatives) {
+                                Map<String, Object> incorrectQuestionInfo = new HashMap<>();
+                                incorrectQuestionInfo.put("question", convertToDto(question));
+                                incorrectQuestionInfo.put("incorrectAlternative", convertToDto(incorrectAlternative));
+                                incorrectQuestionInfo.put("topic", convertToDto(topic));
+
+                                Optional<Alternative> correctAlternative = question.getAlternatives().stream()
+                                        .filter(Alternative::getIs_answer)
+                                        .filter(alternative -> !alternative.getIs_marked())
+                                        .findFirst();
+
+                                correctAlternative.ifPresent(alt -> {
+                                    incorrectQuestionInfo.put("correctAlternative", convertToDto(alt));
+                                    incorrectQuestionInfo.put("topic", convertToDto(topic));
+                                });
+
+                                incorrectQuestions.add(incorrectQuestionInfo);
+                            }
+                        }
+                        quizResult.put("incorrectQuestions", incorrectQuestions);
+                        quizResults.add(quizResult);
                     }
                 }
             }
         }
 
-        return nota;
+        Map<String, Object> result = new HashMap<>();
+        result.put("quizResults", quizResults);
+
+        return result;
     }
+
 
 
     private QuestionDTO convertToDto(Question question) {
@@ -333,6 +372,14 @@ public class QuizzService {
                 .value(alternative.getValue())
                 .is_answer(alternative.getIs_answer())
                 .is_marked(alternative.getIs_marked())
+                .build();
+    }
+    private TopicDTO convertToDto(Topic topic) {
+        return TopicDTO.builder()
+                .id(topic.getId())
+                .name(topic.getName())
+                .competence(topic.getCompetence())
+                .learningUnit(topic.getLearningUnit())
                 .build();
     }
 
