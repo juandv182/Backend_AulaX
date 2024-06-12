@@ -37,7 +37,13 @@ public class DtoMapperUser {
                 this.user.getId_hijo(),
                 this.user.getNombres(),
                 this.user.getApellidos(),
-                this.user.isGenero()
+                this.user.isGenero(),
+                this.user.getPreferenciaAprendizaje(),
+                this.user.isFirstLogin(),
+                this.user.getFirstLogin(),
+                this.user.getLastLogin(),
+                this.user.getTotalTimeLoggedIn()
+
 
         );
 

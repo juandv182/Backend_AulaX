@@ -1,6 +1,7 @@
 package com.example.resourcesactivities.controller;
 
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,7 +51,11 @@ public class UserController {
         }
         return ResponseEntity.notFound().build();
     }
-
+    @GetMapping("/{userId}/total-time")
+    public ResponseEntity<String> getTotalTimeLoggedIn(@PathVariable Long userId) {
+        String totalTimeLoggedIn = service.getUserTotalTimeLoggedInReadable(userId);
+        return ResponseEntity.ok(totalTimeLoggedIn);
+    }
     @PostMapping
     public ResponseEntity<?> create(@Valid @RequestBody User user, BindingResult result) {
         if(result.hasErrors()){
@@ -58,7 +63,18 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.CREATED).body(service.save(user));
     }
-
+    @PostMapping("/{userId}/login")
+    public ResponseEntity<Void> updateLoginTimes(@PathVariable Long userId) {
+        LocalDateTime loginTime = LocalDateTime.now();
+        service.updateUserLoginTimes(userId, loginTime);
+        return ResponseEntity.ok().build();
+    }
+    @PostMapping("/{userId}/logout")
+    public ResponseEntity<Void> updateLogoutTimes(@PathVariable Long userId) {
+        LocalDateTime logoutTime = LocalDateTime.now();
+        service.updateUserLogoutTimes(userId, logoutTime);
+        return ResponseEntity.ok().build();
+    }
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id) {
         if(result.hasErrors()){

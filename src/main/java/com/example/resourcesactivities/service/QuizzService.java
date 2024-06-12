@@ -23,6 +23,10 @@ public class QuizzService {
     private TopicRepository topicRepository;
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private ReinforceTopicRepository reinforceTopicRepository;
     @Transactional
     public List<QuizzDTO> getAll(){
         List<Quizz> quizzList = quizzRepository.findAll();
@@ -291,7 +295,7 @@ public class QuizzService {
                 .collect(Collectors.toList());
     }
     @Transactional
-    public Map<String, Object> getTotalNotaForCourse(Integer quizzId, Integer courseId) {
+    public Map<String, Object> getTotalNotaForCourse(Integer quizzId, Integer courseId,Long userId) {
         Quizz quizz = quizzRepository.findById(quizzId)
                 .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
 
@@ -303,6 +307,7 @@ public class QuizzService {
                 .orElseThrow(() -> new RuntimeException("Curso no encontrado con ID: " + courseId));
 
         List<Map<String, Object>> quizResults = new ArrayList<>();
+        Set<Topic> reinforceTopics = new HashSet<>();
         List<Topic> topics = topicRepository.findAllByCourse(course);
 
         for (Topic topic : topics) {
@@ -337,6 +342,7 @@ public class QuizzService {
                                 });
 
                                 incorrectQuestions.add(incorrectQuestionInfo);
+                                reinforceTopics.add(topic);
                             }
                         }
                         quizResult.put("incorrectQuestions", incorrectQuestions);
@@ -345,7 +351,16 @@ public class QuizzService {
                 }
             }
         }
-
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            for (Topic topic : reinforceTopics) {
+                ReinforceTopic reinforceTopic = new ReinforceTopic();
+                reinforceTopic.setUser(user.orElseThrow());
+                reinforceTopic.setTopic(topic);
+                reinforceTopic.setQuizz(quizz);
+                reinforceTopicRepository.save(reinforceTopic);
+            }
+        }
         Map<String, Object> result = new HashMap<>();
         result.put("quizResults", quizResults);
 

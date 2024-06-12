@@ -66,10 +66,10 @@ public class QuizzController {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         }
     }
-    @GetMapping("/{quizzId}/course/{courseId}/detailed-total-nota")
-    public ResponseEntity<Map<String, Object>> getDetailedTotalNotaForCourse(@PathVariable Integer quizzId, @PathVariable Integer courseId) {
+    @GetMapping("/{quizzId}/course/{courseId}/detailed-total-nota/{userId}/User")
+    public ResponseEntity<Map<String, Object>> getDetailedTotalNotaForCourse(@PathVariable Integer quizzId, @PathVariable Integer courseId,@PathVariable Long userId) {
         try {
-            Map<String, Object> result = service.getTotalNotaForCourse(quizzId, courseId);
+            Map<String, Object> result = service.getTotalNotaForCourse(quizzId, courseId,userId);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

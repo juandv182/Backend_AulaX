@@ -4,6 +4,7 @@ import com.example.resourcesactivities.dto.UserDTO;
 import com.example.resourcesactivities.model.User;
 import com.example.resourcesactivities.request.UserRequest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,9 @@ public interface UserService {
         UserDTO findByUsername(String username);
 
         void remove(Long id);
+        void  updateUserLoginTimes(Long userId, LocalDateTime loginTime);
+        void  updateUserLogoutTimes(Long userId, LocalDateTime logoutTime);
+        String getUserTotalTimeLoggedInReadable(Long userId);
 
 
 }

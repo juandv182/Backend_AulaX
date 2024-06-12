@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -84,7 +85,9 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserDTO findByUsername(String username) {
         Optional<User> u=repository.findByUsername(username);
+
         UserDTO userDto = DtoMapperUser.builder().setUser(u.orElseThrow()).build();
+        System.out.println(userDto);
         return  userDto;
     }
 
@@ -92,6 +95,27 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void remove(Long id) {
         repository.deleteById(id);
+    }
+
+    @Override
+    public void updateUserLoginTimes(Long userId, LocalDateTime loginTime) {
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        user.updateLoginTimes(loginTime);
+        repository.save(user);
+    }
+
+    @Override
+    public void updateUserLogoutTimes(Long userId, LocalDateTime logoutTime) {
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        user.updateLogoutTime(logoutTime);
+        repository.save(user);
+    }
+    public String getUserTotalTimeLoggedInReadable(Long userId) {
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        return user.getTotalTimeLoggedInReadable();
     }
     private List<Role> getRoles(IUser user) {
         Optional<Role> ou = roleRepository.findByName("ROLE_ALUMNO");
