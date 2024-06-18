@@ -75,6 +75,11 @@ public class UserController {
         service.updateUserLogoutTimes(userId, logoutTime);
         return ResponseEntity.ok().build();
     }
+    @PostMapping("/{userId}/user/{preferencia}/updatePreferenciasAprendizaje")
+    public ResponseEntity<Void> updateLogoutTimes(@PathVariable Long userId,@PathVariable String preferencia ){
+        service.updatePreferenciasAprendizaje(userId, preferencia);
+        return ResponseEntity.ok().build();
+    }
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody UserRequest user, BindingResult result, @PathVariable Long id) {
         if(result.hasErrors()){

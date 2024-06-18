@@ -87,7 +87,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> u=repository.findByUsername(username);
 
         UserDTO userDto = DtoMapperUser.builder().setUser(u.orElseThrow()).build();
-        System.out.println(userDto);
+
         return  userDto;
     }
 
@@ -102,6 +102,13 @@ public class UserServiceImpl implements UserService {
         User user = repository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
         user.updateLoginTimes(loginTime);
+        repository.save(user);
+    }
+    @Override
+    public void updatePreferenciasAprendizaje(Long userId, String preferencias) {
+        User user = repository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+        user.updatePrefenrenciasAprendizaje(preferencias);
         repository.save(user);
     }
 

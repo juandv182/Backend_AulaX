@@ -149,6 +149,53 @@ public class FileController {
 
         return fileDTO != null ? ResponseEntity.ok().body(fileDTO) : ResponseEntity.notFound().build();
     }
+    @Transactional
+    @GetMapping("/{topicId}/topic/{typeFileId}/typeFile")
+    public ResponseEntity<List<ResourceFileDTO>> getFileByTopicIdAndTypeFile(@PathVariable Integer topicId,@PathVariable Integer typeFileId) {
+        List<ResourceFile> files=fileRepository.findByTypeFileId(typeFileId);
+        List<ResourceFileDTO> fDTO= files.stream().map(f->{
+
+                    Topic t = f.getMyResource().getTopic();
+                    TopicDTO topicDTO = TopicDTO.builder()
+                            .id(t.getId())
+                            .name(t.getName())
+                            .description((t.getDescription()))
+                            .course((t.getCourse()))
+                            .learningUnit(t.getLearningUnit())
+                            .competence(t.getCompetence())
+                            .status(t.getStatus())
+                            .createdAt(t.getCreatedAt())
+                            .updatedAt(t.getUpdatedAt())
+                            .build();
+                    return ResourceFileDTO.builder()
+                            .id(f.getId())
+                            .name(f.getName())
+                            .url(f.getUrl())
+                            .status((f.getStatus()))
+                            .createdAt(f.getCreatedAt())
+                            .updatedAt(f.getUpdatedAt())
+                            .resource(MyResourceDTO.builder()
+                                    .id(f.getMyResource().getId())
+                                    .name(f.getMyResource().getName())
+                                    .description(f.getMyResource().getDescription())
+                                    .topic(topicDTO)
+                                    .status(f.getMyResource().getStatus())
+                                    .createdAt(f.getMyResource().getCreatedAt())
+                                    .updatedAt(f.getMyResource().getUpdatedAt())
+                                    .build())
+                            .typeFile(TypeFileDTO.builder()
+                                    .id(f.getTypeFile().getId())
+                                    .name(f.getTypeFile().getName())
+                                    .build()
+
+                            )
+                            .build();
+
+        }).filter(f->f.getResource().getTopic().getId()==topicId).collect(Collectors.toList());
+
+
+        return ResponseEntity.ok(fDTO);
+    }
 
     @Transactional
     @GetMapping("/resource/{id}")

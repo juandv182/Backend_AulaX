@@ -63,7 +63,7 @@ public class User implements IUser {
 
     private Long id_hijo;
 
-    private boolean isFirstLogin=true;
+    private boolean esPrimerLoguin=true;
 
     @CreationTimestamp
     private LocalDateTime createdAt;
@@ -75,7 +75,7 @@ public class User implements IUser {
     private LocalDateTime lastLogin;
     private Long totalTimeLoggedIn = 0L;
     public void updateLoginTimes(LocalDateTime loginTime) {
-        if (this.isFirstLogin) {
+        if (this.esPrimerLoguin) {
             this.firstLogin = loginTime;
         }
         if (this.lastLogin != null) {
@@ -88,9 +88,12 @@ public class User implements IUser {
             this.totalTimeLoggedIn = java.time.Duration.between(this.lastLogin, logoutTime).getSeconds();
         }
         this.lastLogin = logoutTime;
-        if (this.isFirstLogin) {
-            this.isFirstLogin = false;
+        if (this.esPrimerLoguin) {
+            this.esPrimerLoguin = false;
         }
+    }
+    public void updatePrefenrenciasAprendizaje(String preferencias){
+        this.preferenciaAprendizaje=preferencias;
     }
     public String getTotalTimeLoggedInReadable() {
         long hours = this.totalTimeLoggedIn / 3600;

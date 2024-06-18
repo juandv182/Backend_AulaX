@@ -104,6 +104,25 @@ public class QuizzController {
         service.update(quizzdto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+    @PutMapping("/{id}/unmark-alternatives")
+    public ResponseEntity<Void> unmarkAlternativesForQuizz(@PathVariable Integer id) {
+        try {
+            service.unmarkAlternativesForQuizz(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+    @PutMapping("/{quizzId}/unmark-alternatives-course-quizz/{courseId}/course")
+    public ResponseEntity<Void> unmarkAlternativesForQuizz(@PathVariable Integer quizzId,@PathVariable Integer courseId) {
+        try {
+            service.unmarkAlternativesForCourseQuizz(quizzId,courseId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteQuizz(@PathVariable(value = "id") Integer id) {
         service.delete(id);

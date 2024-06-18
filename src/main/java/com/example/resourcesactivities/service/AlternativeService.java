@@ -128,7 +128,7 @@ public class AlternativeService {
 
 
         alternativeRepository.save(existingAlternative);
-        System.out.println(qdto.getId());
+        //System.out.println("Se accede a actualizar la nota del quizz con id: " + qdto.getId());
         quizzService.updateNota(qdto.getId());
     }
     @Transactional

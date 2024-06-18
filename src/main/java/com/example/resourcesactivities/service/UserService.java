@@ -21,6 +21,7 @@ public interface UserService {
         void remove(Long id);
         void  updateUserLoginTimes(Long userId, LocalDateTime loginTime);
         void  updateUserLogoutTimes(Long userId, LocalDateTime logoutTime);
+        void updatePreferenciasAprendizaje(Long userId, String preferencias);
         String getUserTotalTimeLoggedInReadable(Long userId);
 
 

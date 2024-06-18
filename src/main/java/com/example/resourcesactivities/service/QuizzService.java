@@ -27,6 +27,8 @@ public class QuizzService {
     private UserRepository userRepository;
     @Autowired
     private ReinforceTopicRepository reinforceTopicRepository;
+    @Autowired
+    private AlternativeRepository alternativeRepository;
     @Transactional
     public List<QuizzDTO> getAll(){
         List<Quizz> quizzList = quizzRepository.findAll();
@@ -191,20 +193,25 @@ public class QuizzService {
         Quizz quizz = quizzRepository.findById(quizzId)
                 .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
         quizz.getQuestions().size();
+
         quizz.updateNota();
 
         quizzRepository.save(quizz);
     }
     @Transactional
-    public Map<String, Map<String, Map<String, List<QuestionDTO>>>> getQuestionsGroupedByCompetencyAndLearningUnit(Integer quizzId) {
-        Quizz quizz = quizzRepository.findById(quizzId)
-                .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+    public Map<String, Map<String, Map<String, List<QuestionDTO>>>> getQuestionsGroupedByCompetencyAndLearningUnit(Integer topicId) {
+        Topic topicF = topicRepository.findById(topicId)
+                .orElseThrow(() -> new RuntimeException("Tema no encontrado con ID: " + topicId));
 
-        if (!"tema".equals(quizz.getTypeQuizz().getName())) {
-            throw new RuntimeException("Este método solo es aplicable para cuestionarios de tipo 'PorCurso'");
+        List<Question> questions = new ArrayList<>();
+        for (MyResource resource : topicF.getResources()) {
+            for (Quizz quizz : resource.getQuizzes()) {
+                if (quizz.getTypeQuizz().getId() == 2) { // Tipo "tema"
+                    questions.addAll(quizz.getQuestions());
+                }
+            }
         }
 
-        List<Question> questions = questionRepository.findByQuizzId(quizzId);
 
         Map<String, Map<String, Map<String, List<QuestionDTO>>>> groupedQuestions = new HashMap<>();
 
@@ -313,19 +320,21 @@ public class QuizzService {
         for (Topic topic : topics) {
             for (MyResource resource : topic.getResources()) {
                 for (Quizz relatedQuizz : resource.getQuizzes()) {
-                    if (relatedQuizz.getTypeQuizz().getId() == 3) {
+                    if (relatedQuizz.getTypeQuizz().getId() == 3 && relatedQuizz.getNota() <=11) {
                         Map<String, Object> quizResult = new HashMap<>();
                         quizResult.put("quizzId", relatedQuizz.getId());
                         quizResult.put("nota", relatedQuizz.getNota());
 
                         List<Map<String, Object>> incorrectQuestions = new ArrayList<>();
                         for (Question question : relatedQuizz.getQuestions()) {
+                            System.out.println("nombre pregunta " + question.getName());
                             List<Alternative> incorrectAlternatives = question.getAlternatives().stream()
                                     .filter(Alternative::getIs_marked)
                                     .filter(alternative -> !alternative.getIs_answer())
                                     .collect(Collectors.toList());
 
                             for (Alternative incorrectAlternative : incorrectAlternatives) {
+                                System.out.println("Alternativas incorrectas:  " + incorrectAlternative.getValue());
                                 Map<String, Object> incorrectQuestionInfo = new HashMap<>();
                                 incorrectQuestionInfo.put("question", convertToDto(question));
                                 incorrectQuestionInfo.put("incorrectAlternative", convertToDto(incorrectAlternative));
@@ -366,8 +375,54 @@ public class QuizzService {
 
         return result;
     }
+    @Transactional
+    public void unmarkAlternativesForQuizz(Integer quizzId) {
+        Quizz quizz = quizzRepository.findById(quizzId)
+                .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+
+        for (Question question : quizz.getQuestions()) {
+            for (Alternative alternative : question.getAlternatives()) {
+                if (alternative.getIs_marked()) {
+                    alternative.setIs_marked(false);
+                    alternativeRepository.save(alternative);
+                }
+            }
+        }
+    }
+    @Transactional
+    public void unmarkAlternativesForCourseQuizz(Integer quizzId, Integer courseId) {
+        Quizz quizz = quizzRepository.findById(quizzId)
+                .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+
+        if (!"curso".equals(quizz.getTypeQuizz().getName())) {
+            throw new RuntimeException("Este método solo es aplicable para cuestionarios de tipo 'PorCurso'");
+        }
+
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Curso no encontrado con ID: " + courseId));
+
+        List<Topic> topics = topicRepository.findAllByCourse(course);
 
 
+        for (Topic topic : topics) {
+            for (MyResource resource : topic.getResources()) {
+                for (Quizz relatedQuizz : resource.getQuizzes()) {
+                    if (relatedQuizz.getTypeQuizz().getId() == 3) {
+                        for (Question question : relatedQuizz.getQuestions()) {
+                            for (Alternative alternative : question.getAlternatives()) {
+                                if (alternative.getIs_marked()) {
+                                    alternative.setIs_marked(false);
+                                    alternativeRepository.save(alternative);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+
+    }
 
     private QuestionDTO convertToDto(Question question) {
         return QuestionDTO.builder()

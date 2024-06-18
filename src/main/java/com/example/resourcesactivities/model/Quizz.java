@@ -36,11 +36,16 @@ public class Quizz {
     private Set<Question> questions =new HashSet<>();
     public void updateNota() {
         System.out.println("Accediendo a updateNota");
-        this.nota = this.questions.stream()
-                .filter(question -> question.getAlternatives().stream()
-                        .allMatch(alternative -> alternative.getIs_answer() && alternative.getIs_marked()))
-                .mapToDouble(Question::getPoints)
-                .sum();
+        Double n=0.0;
+        for(Question question:this.questions){
+
+            for(Alternative al:question.getAlternatives()){
+                if(al.getIs_marked() && al.getIs_answer()){
+                    n+=question.getPoints();
+                }
+            }
+        }
+        this.nota +=  n;
         System.out.println("Nota actualizada: " + this.nota );
     }
 }

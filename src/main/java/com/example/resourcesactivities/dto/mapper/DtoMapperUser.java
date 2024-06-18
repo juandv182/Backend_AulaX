@@ -39,7 +39,7 @@ public class DtoMapperUser {
                 this.user.getApellidos(),
                 this.user.isGenero(),
                 this.user.getPreferenciaAprendizaje(),
-                this.user.isFirstLogin(),
+                this.user.isEsPrimerLoguin(),
                 this.user.getFirstLogin(),
                 this.user.getLastLogin(),
                 this.user.getTotalTimeLoggedIn()
