@@ -49,9 +49,9 @@ public class QuizzController {
         return new ResponseEntity<>(quizzDTOList, HttpStatus.OK);
     }
     @GetMapping("/{id}/grouped-questions")
-    public ResponseEntity<Map<String, Map<String, Map<String, List<QuestionDTO>>>>> getQuestionsGroupedByCompetencyAndLearningUnit(@PathVariable Integer id) {
+    public ResponseEntity<Map<String, Object> > getQuestionsGroupedByCompetencyAndLearningUnit(@PathVariable Integer id) {
         try {
-            Map<String, Map<String, Map<String, List<QuestionDTO>>>> groupedQuestions = service.getQuestionsGroupedByCompetencyAndLearningUnit(id);
+            Map<String, Object>  groupedQuestions = service.getQuestionsGroupedByCompetencyAndLearningUnit(id);
             return new ResponseEntity<>(groupedQuestions, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -70,6 +70,15 @@ public class QuizzController {
     public ResponseEntity<Map<String, Object>> getDetailedTotalNotaForCourse(@PathVariable Integer quizzId, @PathVariable Integer courseId,@PathVariable Long userId) {
         try {
             Map<String, Object> result = service.getTotalNotaForCourse(quizzId, courseId,userId);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
+    }
+    @GetMapping("/{quizzId}/detailed-total-nota-topic/{userId}/User/{topicId}/Topic")
+    public ResponseEntity<Map<String, Object>> getDetailedTotalNota(@PathVariable Integer quizzId,@PathVariable Long userId,@PathVariable Integer topicId) {
+        try {
+            Map<String, Object> result = service.getTotalNotaQuizz(quizzId,userId,topicId);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (RuntimeException e) {
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);

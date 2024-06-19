@@ -23,4 +23,5 @@ public class ReinforceTopicDTO {
     private TopicDTO topic;
     private QuizzDTO quizz;
     private LocalDateTime createdAt;
+    private Boolean estado;
 }

@@ -1,5 +1,6 @@
 package com.example.resourcesactivities.controller;
 
+import com.example.resourcesactivities.dto.ReinforceTopicDTO;
 import com.example.resourcesactivities.dto.TopicDTO;
 import com.example.resourcesactivities.model.Topic;
 import com.example.resourcesactivities.service.ReinforceTopicService;
@@ -18,9 +19,9 @@ public class ReinforceTopicController {
     @Autowired
     private ReinforceTopicService reinforceTopicService;
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<TopicDTO>> getTopicsByUserId(@PathVariable Long userId) {
-        List<TopicDTO> topics = reinforceTopicService.getTopicsByUserId(userId);
+    @GetMapping("/user/{userId}/course/{courseId}")
+    public ResponseEntity<List<ReinforceTopicDTO>> getTopicsByUserId(@PathVariable Long userId,@PathVariable Integer courseId) {
+        List<ReinforceTopicDTO> topics = reinforceTopicService.getTopicsByUserId(userId,courseId);
         return ResponseEntity.ok(topics);
     }
 

@@ -23,7 +23,8 @@ public class ResourceFileDTO {
     private MyResourceDTO resource;
     private TypeFileDTO typeFile;
 
-    public ResourceFileDTO(Integer id, String name, String url, Boolean status, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public ResourceFileDTO(Integer id, String name, String url, Boolean status, LocalDateTime createdAt,
+                           LocalDateTime updatedAt) {
         this.id=id;
         this.name=name;
         this.url=url;

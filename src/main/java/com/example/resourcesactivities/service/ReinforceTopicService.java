@@ -16,19 +16,27 @@ public class ReinforceTopicService {
     @Autowired
     private ReinforceTopicRepository reinforceTopicRepository;
 
-    public List<TopicDTO> getTopicsByUserId(Long userId) {
+    public List<ReinforceTopicDTO> getTopicsByUserId(Long userId,Integer courseId) {
         List<ReinforceTopic> reinforceTopics = reinforceTopicRepository.findByUserId(userId);
-        List<TopicDTO> rtdto = reinforceTopics.stream().map(r->
-            TopicDTO.builder().id(r.getTopic().getId())
+
+
+        List<ReinforceTopicDTO> rtdto = reinforceTopics.stream().map(r->
+        {
+            TopicDTO topic = TopicDTO.builder().id(r.getTopic().getId())
                     .name(r.getTopic().getName())
                     .createdAt(r.getTopic().getCreatedAt())
-                            .competence(r.getTopic().getCompetence())
-                                    .course(r.getTopic().getCourse())
-                                            .description(r.getTopic().getDescription())
-                                                    .updatedAt(r.getTopic().getUpdatedAt())
-                                                            .build()
+                    .competence(r.getTopic().getCompetence())
+                    .course(r.getTopic().getCourse())
+                    .description(r.getTopic().getDescription())
+                    .updatedAt(r.getTopic().getUpdatedAt())
+                    .build();
+            return ReinforceTopicDTO.builder()
+                    .topic(topic)
+                    .estado(r.getEstado())
+                    .build();
 
-                ).distinct().collect(Collectors.toList());
+        }).filter(r->r.getTopic().getCourse().getId()==courseId)
+                .distinct().collect(Collectors.toList());
 
         return rtdto;
     }

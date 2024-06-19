@@ -34,4 +34,6 @@ public class ReinforceTopic {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    private Boolean estado=false;
 }

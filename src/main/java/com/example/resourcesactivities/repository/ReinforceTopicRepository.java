@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface ReinforceTopicRepository extends JpaRepository<ReinforceTopic, Integer> {
     List<ReinforceTopic> findByUserId(Long userId);
+    void deleteByUserId(Long userId);
 }

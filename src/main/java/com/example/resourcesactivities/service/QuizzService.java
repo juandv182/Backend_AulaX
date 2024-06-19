@@ -199,19 +199,21 @@ public class QuizzService {
         quizzRepository.save(quizz);
     }
     @Transactional
-    public Map<String, Map<String, Map<String, List<QuestionDTO>>>> getQuestionsGroupedByCompetencyAndLearningUnit(Integer topicId) {
+    public Map<String, Object> getQuestionsGroupedByCompetencyAndLearningUnit(Integer topicId) {
         Topic topicF = topicRepository.findById(topicId)
                 .orElseThrow(() -> new RuntimeException("Tema no encontrado con ID: " + topicId));
 
         List<Question> questions = new ArrayList<>();
+        Integer quizzId = null; // Variable para almacenar el ID del Quizz
+
         for (MyResource resource : topicF.getResources()) {
             for (Quizz quizz : resource.getQuizzes()) {
                 if (quizz.getTypeQuizz().getId() == 2) { // Tipo "tema"
                     questions.addAll(quizz.getQuestions());
+                    quizzId = quizz.getId(); // Obtener el ID del Quizz
                 }
             }
         }
-
 
         Map<String, Map<String, Map<String, List<QuestionDTO>>>> groupedQuestions = new HashMap<>();
 
@@ -228,8 +230,80 @@ public class QuizzService {
                     .add(convertToDto(question));
         }
 
+        Map<String, Object> response = new HashMap<>();
+        response.put("quizzId", quizzId);
+        response.put("groupedQuestions", groupedQuestions);
 
-        return groupedQuestions;
+        return response;
+    }
+    @Transactional
+    public Map<String, Object> getTotalNotaQuizz(Integer quizzId,Long userId,Integer topicId)  {
+
+        Quizz quizz = quizzRepository.findById(quizzId)
+                .orElseThrow(() -> new RuntimeException("Cuestionario no encontrado con ID: " + quizzId));
+
+
+        List<Map<String, Object>> quizResults = new ArrayList<>();
+
+                    if (quizz.getTypeQuizz().getId() == 2) {
+                        Map<String, Object> quizResult = new HashMap<>();
+                        quizResult.put("quizzId", quizz.getId());
+                        quizResult.put("nota", quizz.getNota());
+
+                        List<Map<String, Object>> incorrectQuestions = new ArrayList<>();
+                        for (Question question : quizz.getQuestions()) {
+                            System.out.println("nombre pregunta " + question.getName());
+                            List<Alternative> incorrectAlternatives = question.getAlternatives().stream()
+                                    .filter(Alternative::getIs_marked)
+                                    .filter(alternative -> !alternative.getIs_answer())
+                                    .collect(Collectors.toList());
+
+                            for (Alternative incorrectAlternative : incorrectAlternatives) {
+                                System.out.println("Alternativas incorrectas:  " + incorrectAlternative.getValue());
+                                Map<String, Object> incorrectQuestionInfo = new HashMap<>();
+                                incorrectQuestionInfo.put("question", convertToDto(question));
+                                incorrectQuestionInfo.put("incorrectAlternative", convertToDto(incorrectAlternative));
+
+
+                                Optional<Alternative> correctAlternative = question.getAlternatives().stream()
+                                        .filter(Alternative::getIs_answer)
+                                        .filter(alternative -> !alternative.getIs_marked())
+                                        .findFirst();
+
+                                correctAlternative.ifPresent(alt -> {
+                                    incorrectQuestionInfo.put("correctAlternative", convertToDto(alt));
+                                });
+
+                                incorrectQuestions.add(incorrectQuestionInfo);
+
+                            }
+                        }
+                        quizResult.put("incorrectQuestions", incorrectQuestions);
+                        quizResults.add(quizResult);
+                    }
+
+
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("quizResults", quizResults);
+
+        if(quizz.getNota()>=11){
+            List<ReinforceTopic> rtl=reinforceTopicRepository.findByUserId(userId);
+            for(ReinforceTopic rt:rtl){
+                if(rt.getTopic().getId()==topicId){
+                    rt.setEstado(true);
+                    reinforceTopicRepository.save(rt);
+                }
+            }
+        }
+
+        quizz.setNota(0.0);
+
+
+        return result;
+
+
+
     }
     @Transactional
     public Map<String, Map<String, Map<String, List<QuestionDTO>>>> getQuestionsForCourseGroupedByCompetencyAndLearningUnit(Integer quizzId, Integer courseId) {
@@ -317,6 +391,7 @@ public class QuizzService {
         Set<Topic> reinforceTopics = new HashSet<>();
         List<Topic> topics = topicRepository.findAllByCourse(course);
 
+
         for (Topic topic : topics) {
             for (MyResource resource : topic.getResources()) {
                 for (Quizz relatedQuizz : resource.getQuizzes()) {
@@ -360,6 +435,24 @@ public class QuizzService {
                 }
             }
         }
+
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("quizResults", quizResults);
+
+        for (Topic topic : topics) {
+            for (MyResource resource : topic.getResources()) {
+                for (Quizz relatedQuizz : resource.getQuizzes()) {
+                    if (relatedQuizz.getTypeQuizz().getId() == 3){
+                        relatedQuizz.setNota(0.0);
+                    }
+                }
+            }
+        }
+
+
+        // Borrar registros existentes de ReinforceTopic para el userId proporcionado
+        reinforceTopicRepository.deleteByUserId(userId);
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             for (Topic topic : reinforceTopics) {
@@ -370,8 +463,7 @@ public class QuizzService {
                 reinforceTopicRepository.save(reinforceTopic);
             }
         }
-        Map<String, Object> result = new HashMap<>();
-        result.put("quizResults", quizResults);
+
 
         return result;
     }
