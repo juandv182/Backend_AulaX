@@ -31,6 +31,7 @@ public class ReinforceTopicService {
                     .updatedAt(r.getTopic().getUpdatedAt())
                     .build();
             return ReinforceTopicDTO.builder()
+                    .id(r.getId())
                     .topic(topic)
                     .estado(r.getEstado())
                     .build();
