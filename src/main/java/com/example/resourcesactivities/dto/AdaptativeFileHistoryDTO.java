@@ -1,5 +1,6 @@
 package com.example.resourcesactivities.dto;
 
+import com.example.resourcesactivities.model.Quizz;
 import com.example.resourcesactivities.model.ReinforceTopic;
 import com.example.resourcesactivities.model.ResourceFile;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -18,11 +19,11 @@ public class AdaptativeFileHistoryDTO {
 
     private Long id;
 
-    private ReinforceTopic reinforceTopic;
+    private ReinforceTopicDTO reinforceTopic;
 
-    private ResourceFile file;
+    private ResourceFileDTO file;
 
-    private Double nota;
+    private QuizzDTO quizzDado;
 
     private LocalDateTime viewedAt;
 }

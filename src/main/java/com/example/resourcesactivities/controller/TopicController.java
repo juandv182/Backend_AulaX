@@ -34,6 +34,11 @@ public class TopicController {
         return service.getAllTopics();
     }
 
+    @GetMapping("/unit/{id}")
+    public List<TopicDTO> getAllTopicsByUnitId(@PathVariable(value = "id") Integer id) {
+        return service.getAllTopicsByUnitId(id);
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<TopicDTO> getTopicById(@PathVariable(value = "id") Integer topicId) {

@@ -19,15 +19,20 @@ public class AdaptativeFileHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reinforce_topic_id", nullable = false)
     private ReinforceTopic reinforceTopic;
 
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "file_id", nullable = false)
     private ResourceFile file;
 
-    private Double nota;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "quizz_id", nullable = false)
+    private Quizz quizzDado;
+
+
 
     private LocalDateTime viewedAt;
 }

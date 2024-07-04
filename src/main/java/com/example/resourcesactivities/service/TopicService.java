@@ -40,6 +40,22 @@ public class TopicService {
         return topicDTOList;
     }
     @Transactional
+    public List<TopicDTO> getAllTopicsByUnitId(Integer uId){
+        List<Topic> topicList = repository.findAllByLearningUnitId(uId);
+        List<TopicDTO> topicDTOList = topicList.stream().map(c -> TopicDTO.builder()
+                .id(c.getId())
+                .name(c.getName())
+                .description((c.getDescription()))
+                .course((c.getCourse()))
+                .learningUnit(c.getLearningUnit())
+                .competence(c.getCompetence())
+                .status(c.getStatus())
+                .createdAt(c.getCreatedAt())
+                .updatedAt(c.getUpdatedAt())
+                .build()).collect(Collectors.toList());
+        return topicDTOList;
+    }
+    @Transactional
     public TopicDTO getTopicById(Integer id) {
         Topic topic=repository.findById(id).
                 orElseThrow(() -> new RuntimeException("Tema no encontrado con ID: " + id));
