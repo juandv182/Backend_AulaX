@@ -1,5 +1,6 @@
 package com.example.resourcesactivities.controller;
 
+import com.example.resourcesactivities.dto.CourseDTO;
 import com.example.resourcesactivities.dto.TopicDTO;
 import com.example.resourcesactivities.model.Competency;
 import com.example.resourcesactivities.model.Topic;
@@ -42,11 +43,16 @@ public class CompetencyController {
         if (competency.isPresent()) {
             List<Topic> topics = topicRepository.findAllByCompetence(competency.get());
             List<TopicDTO> topicsDTO =topics.stream().map(t->{
+                CourseDTO cdto = CourseDTO.builder()
+                        .id(t.getCourse().getId())
+                        .name(t.getCourse().getName())
+                        .description(t.getCourse().getDescription())
+                        .build();
                 return TopicDTO.builder()
                         .id(t.getId())
                         .name(t.getName())
                         .description((t.getDescription()))
-                        .course((t.getCourse()))
+                        .course(cdto)
                         .learningUnit(t.getLearningUnit())
                         .competence(t.getCompetence())
                         .status(t.getStatus())

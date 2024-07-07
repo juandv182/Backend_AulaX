@@ -14,8 +14,18 @@ public class UserRequest implements IUser {
     @Email
     private String email;
 
+    private String password;
+
     private boolean docente;
     private boolean padrefam;
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public String getUsername() {
         return username;

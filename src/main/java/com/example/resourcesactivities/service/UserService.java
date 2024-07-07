@@ -23,6 +23,7 @@ public interface UserService {
         void  updateUserLogoutTimes(Long userId, LocalDateTime logoutTime);
         void updatePreferenciasAprendizaje(Long userId, String preferencias);
         String getUserTotalTimeLoggedInReadable(Long userId);
+        List<UserDTO> getAllUsersTotalTimeLoggedIn();
 
 
 }

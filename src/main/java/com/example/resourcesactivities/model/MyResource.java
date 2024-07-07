@@ -28,6 +28,7 @@ public class MyResource {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "topic_id")
     private Topic topic;
+    private String mode; // "library" o "adaptive"
     private Boolean status;
     @CreationTimestamp
     private LocalDateTime createdAt;

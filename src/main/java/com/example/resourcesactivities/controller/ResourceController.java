@@ -28,7 +28,11 @@ public class ResourceController {
         MyResourceDTO resource = resourceService.getResourceById(resourceId);
         return resource != null ? ResponseEntity.ok().body(resource) : ResponseEntity.notFound().build();
     }
-
+    @GetMapping("/filterByTypeFile/{typeFileId}")
+    public ResponseEntity<List<MyResourceDTO>> getResourcesByTypeFileId(@PathVariable Integer typeFileId) {
+        List<MyResourceDTO> resources = resourceService.getResourcesByTypeFileId(typeFileId);
+        return resources != null ? ResponseEntity.ok(resources) : ResponseEntity.notFound().build();
+    }
     @GetMapping("/{id}/files")
     public ResponseEntity<List<ResourceFileDTO>> getFilesByResourceId(@PathVariable(value = "id") Integer resourceId) {
         List<ResourceFileDTO> files = resourceService.getFilesByResourceId(resourceId);

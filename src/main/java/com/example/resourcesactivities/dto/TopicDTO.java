@@ -22,12 +22,13 @@ public class TopicDTO {
     private String name;
     private String description;
 
-    private Course course;
+    private CourseDTO course;
 
     private LearningUnit learningUnit;
 
     private Competency competence;
     private Boolean status;
+
 
     private LocalDateTime createdAt;
 

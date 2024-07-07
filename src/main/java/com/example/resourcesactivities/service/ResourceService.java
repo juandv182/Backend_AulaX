@@ -1,15 +1,14 @@
 package com.example.resourcesactivities.service;
 
-import com.example.resourcesactivities.dto.ActivityDTO;
-import com.example.resourcesactivities.dto.MyResourceDTO;
-import com.example.resourcesactivities.dto.ResourceFileDTO;
-import com.example.resourcesactivities.dto.TopicDTO;
+import com.example.resourcesactivities.dto.*;
 import com.example.resourcesactivities.model.MyResource;
 import com.example.resourcesactivities.model.ResourceFile;
 import com.example.resourcesactivities.model.Topic;
 import com.example.resourcesactivities.repository.FileRepository;
 import com.example.resourcesactivities.repository.MyResourceRepository;
 import com.example.resourcesactivities.repository.TopicRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,16 +29,22 @@ public class ResourceService {
 
     @Autowired
     private TopicRepository topicRepository;
+    private static final Logger logger = LoggerFactory.getLogger(ResourceService.class);
     @Transactional
     public List<MyResourceDTO> getAllResources() {
        List<MyResource> resourceList=myResourceRepository.findAll();
        List<MyResourceDTO> resourceDTOList=resourceList.stream().map(r -> {
            Topic topic=r.getTopic();
+           CourseDTO cdto = CourseDTO.builder()
+                   .id(topic.getCourse().getId())
+                   .name(topic.getCourse().getName())
+                   .description(topic.getCourse().getDescription())
+                   .build();
            TopicDTO topicDTO = TopicDTO.builder()
                    .id(topic.getId())
                    .name(topic.getName())
                    .description((topic.getDescription()))
-                   .course((topic.getCourse()))
+                   .course(cdto)
                    .learningUnit(topic.getLearningUnit())
                    .competence(topic.getCompetence())
                    .status(topic.getStatus())
@@ -51,6 +56,7 @@ public class ResourceService {
                    .name(r.getName())
                    .description(r.getDescription())
                    .topic(topicDTO)
+                   .mode(r.getMode())
                    .status(r.getStatus())
                    .createdAt(r.getCreatedAt())
                    .updatedAt(r.getUpdatedAt())
@@ -74,11 +80,16 @@ public class ResourceService {
         Optional<MyResource> resource = myResourceRepository.findById(resourceId);
         if (resource.isPresent()){
             Topic topic=resource.orElseThrow().getTopic();
+            CourseDTO cdto = CourseDTO.builder()
+                    .id(topic.getId())
+                    .name(topic.getName())
+                    .description(topic.getDescription())
+                    .build();
             TopicDTO topicDTO = TopicDTO.builder()
                     .id(topic.getId())
                     .name(topic.getName())
                     .description((topic.getDescription()))
-                    .course((topic.getCourse()))
+                    .course(cdto)
                     .learningUnit(topic.getLearningUnit())
                     .competence(topic.getCompetence())
                     .status(topic.getStatus())
@@ -90,6 +101,7 @@ public class ResourceService {
                     .name(resource.orElseThrow().getName())
                     .description(resource.orElseThrow().getDescription())
                     .topic(topicDTO)
+                    .mode(resource.orElseThrow().getMode())
                     .status(resource.orElseThrow().getStatus())
                     .createdAt(resource.orElseThrow().getCreatedAt())
                     .updatedAt(resource.orElseThrow().getUpdatedAt())
@@ -116,7 +128,30 @@ public class ResourceService {
         return fileRepository.findByMyResourceId(resourceId).stream().map(
                 this::convertToDTO).collect(Collectors.toList());
     }
+    @Transactional
+    public List<MyResourceDTO> getResourcesByTypeFileId(Integer typeFileId) {
+        List<MyResource> resources = myResourceRepository.findAll();
+        logger.info("Total resources found: {}", resources.size());
 
+        List<MyResourceDTO> filteredResources = resources.stream()
+                .map(resource -> {
+                    Set<ResourceFile> filteredFiles = resource.getFiles().stream()
+                            .filter(file -> file.getTypeFile().getId().equals(typeFileId))
+                            .collect(Collectors.toSet());
+
+                    if (!filteredFiles.isEmpty()) {
+                        MyResourceDTO dto = convertToDTO(resource);
+                        dto.setFiles(filteredFiles.stream().map(this::convertToDTO).collect(Collectors.toSet()));
+                        return dto;
+                    }
+                    return null;
+                })
+                .filter(dto -> dto != null)
+                .collect(Collectors.toList());
+
+        logger.info("Total filtered resources: {}", filteredResources.size());
+        return filteredResources;
+    }
     @Transactional
     public MyResourceDTO createResource(MyResourceDTO myResourceDTO) {
         MyResource myResource = new MyResource();
@@ -191,6 +226,7 @@ public class ResourceService {
                     .name(updatedMyResource.getName())
                     .description(updatedMyResource.getDescription())
                     .topic(topicdto)
+                    .mode(updatedMyResource.getMode())
                     .status(updatedMyResource.getStatus())
                     .createdAt(updatedMyResource.getCreatedAt())
                     .updatedAt(updatedMyResource.getUpdatedAt())
@@ -223,12 +259,26 @@ public class ResourceService {
     }
 
 
-    private ResourceFileDTO convertToDTO(ResourceFile resourceFile) {
-        return new ResourceFileDTO(resourceFile.getId(),
-                resourceFile.getName(),
-                resourceFile.getUrl(),
-                resourceFile.getStatus(),
-                resourceFile.getCreatedAt(),
-                resourceFile.getUpdatedAt());
+    private ResourceFileDTO convertToDTO(ResourceFile file) {
+        return ResourceFileDTO.builder()
+                .id(file.getId())
+                .name(file.getName())
+                .url(file.getUrl())
+                .status(file.getStatus())
+                .createdAt(file.getCreatedAt())
+                .updatedAt(file.getUpdatedAt())
+                .build();
+    }
+    private MyResourceDTO convertToDTO(MyResource resource) {
+        return MyResourceDTO.builder()
+                .id(resource.getId())
+                .name(resource.getName())
+                .mode(resource.getMode())
+                .description(resource.getDescription())
+                .status(resource.getStatus())
+                .createdAt(resource.getCreatedAt())
+                .updatedAt(resource.getUpdatedAt())
+                .files(resource.getFiles().stream().map(this::convertToDTO).collect(Collectors.toSet()))
+                .build();
     }
 }

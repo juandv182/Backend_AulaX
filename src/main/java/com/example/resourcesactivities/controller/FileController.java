@@ -1,9 +1,6 @@
 package com.example.resourcesactivities.controller;
 
-import com.example.resourcesactivities.dto.MyResourceDTO;
-import com.example.resourcesactivities.dto.ResourceFileDTO;
-import com.example.resourcesactivities.dto.TopicDTO;
-import com.example.resourcesactivities.dto.TypeFileDTO;
+import com.example.resourcesactivities.dto.*;
 import com.example.resourcesactivities.model.MyResource;
 import com.example.resourcesactivities.model.ResourceFile;
 import com.example.resourcesactivities.model.Topic;
@@ -59,11 +56,16 @@ public class FileController {
             return ResponseEntity.noContent().build();
         }
         List<ResourceFileDTO> filesDTO = files.stream().map(f->{
+            CourseDTO cdto = CourseDTO.builder()
+                    .id(f.getMyResource().getTopic().getId())
+                    .name(f.getMyResource().getTopic().getName())
+                    .description(f.getMyResource().getTopic().getDescription())
+                    .build();
             TopicDTO topicDTO = TopicDTO.builder()
                     .id(f.getMyResource().getTopic().getId())
                     .name(f.getMyResource().getTopic().getName())
                     .description((f.getMyResource().getTopic().getDescription()))
-                    .course((f.getMyResource().getTopic().getCourse()))
+                    .course(cdto)
                     .learningUnit(f.getMyResource().getTopic().getLearningUnit())
                     .competence(f.getMyResource().getTopic().getCompetence())
                     .status(f.getMyResource().getTopic().getStatus())
@@ -112,11 +114,16 @@ public class FileController {
         ResourceFile f=fileRepository.findById(id).
                 orElseThrow(() -> new ExpressionException("Archivo no encontrado con ID: " + id));
         Topic t = f.getMyResource().getTopic();
+        CourseDTO cdto = CourseDTO.builder()
+                .id(t.getId())
+                .name(t.getName())
+                .description(t.getDescription())
+                .build();
         TopicDTO topicDTO = TopicDTO.builder()
                 .id(t.getId())
                 .name(t.getName())
                 .description((t.getDescription()))
-                .course((t.getCourse()))
+                .course(cdto)
                 .learningUnit(t.getLearningUnit())
                 .competence(t.getCompetence())
                 .status(t.getStatus())
@@ -156,11 +163,16 @@ public class FileController {
         List<ResourceFileDTO> fDTO= files.stream().map(f->{
 
                     Topic t = f.getMyResource().getTopic();
+                    CourseDTO cdto = CourseDTO.builder()
+                    .id(f.getMyResource().getTopic().getId())
+                    .name(f.getMyResource().getTopic().getName())
+                    .description(f.getMyResource().getTopic().getDescription())
+                    .build();
                     TopicDTO topicDTO = TopicDTO.builder()
                             .id(t.getId())
                             .name(t.getName())
                             .description((t.getDescription()))
-                            .course((t.getCourse()))
+                            .course(cdto)
                             .learningUnit(t.getLearningUnit())
                             .competence(t.getCompetence())
                             .status(t.getStatus())
@@ -275,11 +287,16 @@ public class FileController {
                             newFile.setTypeFile(typeFile.orElseThrow());
                             newFile.setStatus(true);
                             fileRepository.save(newFile);
+                            CourseDTO cdto = CourseDTO.builder()
+                                    .id(myResource.getTopic().getId())
+                                    .name(myResource.getTopic().getName())
+                                    .description(myResource.getTopic().getDescription())
+                                    .build();
                             TopicDTO topicDTO = TopicDTO.builder()
                                     .id(myResource.getTopic().getId())
                                     .name(myResource.getTopic().getName())
                                     .description((myResource.getTopic().getDescription()))
-                                    .course((myResource.getTopic().getCourse()))
+                                    .course(cdto)
                                     .learningUnit(myResource.getTopic().getLearningUnit())
                                     .competence(myResource.getTopic().getCompetence())
                                     .status(myResource.getTopic().getStatus())

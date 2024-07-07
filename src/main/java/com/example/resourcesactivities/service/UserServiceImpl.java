@@ -76,6 +76,7 @@ public class UserServiceImpl implements UserService {
             userDb.setRoles(getRoles(user));
             userDb.setUsername(user.getUsername());
             userDb.setEmail(user.getEmail());
+            userDb.setPassword(user.getPassword());
             userOptional = repository.save(userDb);
         }
         return Optional.ofNullable(DtoMapperUser.builder().setUser(userOptional).build());
@@ -124,6 +125,19 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
         return user.getTotalTimeLoggedInReadable();
     }
+
+    @Override
+    public List<UserDTO> getAllUsersTotalTimeLoggedIn() {
+        List<User> users = (List<User>) repository.findAll();
+        return users.stream().map(user -> {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(user.getId());
+            userDTO.setUsername(user.getUsername());
+            userDTO.setTotalTimeLoggedIn(user.getTotalTimeLoggedIn());
+            return userDTO;
+        }).collect(Collectors.toList());
+    }
+
     private List<Role> getRoles(IUser user) {
         Optional<Role> ou = roleRepository.findByName("ROLE_ALUMNO");
 
