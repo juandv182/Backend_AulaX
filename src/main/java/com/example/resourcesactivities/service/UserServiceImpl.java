@@ -2,9 +2,11 @@ package com.example.resourcesactivities.service;
 
 import com.example.resourcesactivities.dto.UserDTO;
 import com.example.resourcesactivities.dto.mapper.DtoMapperUser;
+import com.example.resourcesactivities.model.Course;
 import com.example.resourcesactivities.model.IUser;
 import com.example.resourcesactivities.model.Role;
 import com.example.resourcesactivities.model.User;
+import com.example.resourcesactivities.repository.CourseRepository;
 import com.example.resourcesactivities.repository.RoleRepository;
 import com.example.resourcesactivities.repository.UserRepository;
 import com.example.resourcesactivities.request.UserRequest;
@@ -28,6 +30,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleRepository roleRepository;
+    @Autowired
+    private CourseRepository courseRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -62,6 +66,11 @@ public class UserServiceImpl implements UserService {
             throw new IllegalArgumentException("Fecha de nacimiento no válida");
         }
 
+        // Asignar todos los cursos al nuevo usuario
+        List<Course> allCourses = courseRepository.findAll();
+        for(Course c:allCourses){
+            c.getUsers().add(user);
+        }
         return DtoMapperUser.builder().setUser(repository.save(user)).build();
     }
 

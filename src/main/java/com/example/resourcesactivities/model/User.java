@@ -66,6 +66,8 @@ public class User implements IUser {
     private Long id_hijo;
 
     private boolean esPrimerLoguin=true;
+    @ManyToMany(mappedBy = "users")
+    private Set<Course> courses = new HashSet<>();
 
 
     @CreationTimestamp
